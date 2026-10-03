@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KassenLager.App/KassenLager.App.csproj" />
+    <Project Path="src/KassenLager.Core/KassenLager.Core.csproj" />
+    <Project Path="src/KassenLager.Data/KassenLager.Data.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KassenLager.Tests/KassenLager.Tests.csproj" />
+  </Folder>
+</Solution>
