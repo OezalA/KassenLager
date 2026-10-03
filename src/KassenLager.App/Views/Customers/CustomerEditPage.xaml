@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Customers.CustomerEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Customers"
+    x:DataType="vm:CustomerEditViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="Name *" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Name}" MaxLength="{Binding NameMaxLength}" Placeholder="Name der Handelskette" />
+
+                <Label Text="Kurzname" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding ShortName}" MaxLength="{Binding ShortNameMaxLength}" Placeholder="optional, für Listen" />
+
+                <Label Text="Notiz" Style="{StaticResource FormLabel}" />
+                <Editor Text="{Binding Note}" MaxLength="{Binding NoteMaxLength}" AutoSize="TextChanges" MinimumHeightRequest="96" />
+
+                <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="52" Margin="0,8,0,0">
+                    <Label Text="Aktiv" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding IsActive}" />
+                </Grid>
+                <Label Style="{StaticResource Hint}" Text="Inaktive Kunden werden bei neuen Buchungen nicht mehr angeboten." />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Speichern" Command="{Binding SaveCommand}" />
+            <Button Text="Löschen" Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}" IsVisible="{Binding IsExisting}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Settings.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Settings"
+    x:DataType="vm:SettingsViewModel"
+    Title="Einstellungen">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="0,0,0,24">
+            <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Customers}" Text="Kunden"
+                              Detail="Handelsketten anlegen, umbenennen, deaktivieren" Command="{Binding OpenCustomersCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Category}" Text="Kategorien"
+                              Detail="Seriennummer- oder Mengenerfassung" Command="{Binding OpenCategoriesCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Unit}" Text="Einheiten"
+                              Detail="Stück, Rolle, Packung …" Command="{Binding OpenUnitsCommand}" />
+
+            <Label Text="Benutzer" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout Padding="16,0" Spacing="8">
+                <Label Text="Name (erscheint auf Berichten)" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}" Placeholder="Vor- und Nachname" ReturnCommand="{Binding SaveUserNameCommand}" />
+                <Button Text="Namen speichern" Command="{Binding SaveUserNameCommand}" />
+            </VerticalStackLayout>
+
+            <Label Text="Darstellung" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout Padding="16,0">
+                <Picker Title="Design" ItemsSource="{Binding ThemeChoices}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=vm:ThemeChoice}"
+                        SelectedItem="{Binding SelectedTheme}" />
+            </VerticalStackLayout>
+
+            <Label Text="Info" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout Padding="16,0" Spacing="4">
+                <Label Text="{Binding AppVersion}" />
+                <Label Style="{StaticResource Hint}" Text="Alle Daten bleiben auf diesem Gerät. Keine Cloud, kein Konto, keine Analyse." />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

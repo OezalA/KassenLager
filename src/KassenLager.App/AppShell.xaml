@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="KassenLager.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="KassenLager">
+
+    <TabBar>
+        <ShellContent Title="Übersicht" Route="{x:Static app:Routes.Overview}" ContentTemplate="{DataTemplate views:OverviewPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static app:Icons.Home}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent Title="Suche" Route="{x:Static app:Routes.Search}" ContentTemplate="{DataTemplate views:SearchPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static app:Icons.Search}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent Title="Buchen" Route="{x:Static app:Routes.Booking}" ContentTemplate="{DataTemplate views:BookingPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static app:Icons.Booking}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent Title="Inventur" Route="{x:Static app:Routes.Inventory}" ContentTemplate="{DataTemplate views:InventoryPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static app:Icons.Inventory}" />
+            </ShellContent.Icon>
+        </ShellContent>
+
+        <ShellContent Title="Mehr" Route="{x:Static app:Routes.More}" ContentTemplate="{DataTemplate views:MorePage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static app:Icons.More}" />
+            </ShellContent.Icon>
+        </ShellContent>
+    </TabBar>
+
+</Shell>

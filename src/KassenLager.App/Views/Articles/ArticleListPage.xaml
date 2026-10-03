@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Articles.ArticleListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Articles"
+    x:DataType="vm:ArticleListViewModel"
+    Title="Artikel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <SearchBar Text="{Binding FilterText}" Placeholder="Bezeichnung, Modell, Hersteller, Nr. …" Margin="8,4,8,0" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,0,8,0">
+            <Picker Title="Kategorie" ItemsSource="{Binding CategoryFilters}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=vm:CategoryFilter}"
+                    SelectedItem="{Binding SelectedCategoryFilter}" />
+            <Label Grid.Column="1" Text="Inaktive" Style="{StaticResource Hint}" VerticalOptions="Center" />
+            <Switch Grid.Column="2" IsToggled="{Binding ShowInactive}" />
+        </Grid>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.Header>
+                <Label Text="{Binding CountText}" Style="{StaticResource Hint}" Margin="16,8,16,0" />
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Keine Artikel gefunden." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:ArticleListItem">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:ArticleListViewModel}}, x:DataType=vm:ArticleListViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Name}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}"
+                                       IsVisible="{Binding ManufacturerAndModel, Converter={StaticResource HasText}}" />
+                                <HorizontalStackLayout Spacing="10">
+                                    <Label Text="{Binding CategoryName}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                                    <Label Text="{Binding ArticleNumber, StringFormat='Nr. {0}'}" Style="{StaticResource ItemSubtitle}" FontSize="13"
+                                           IsVisible="{Binding ArticleNumber, Converter={StaticResource HasText}}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Style="{StaticResource InactiveBadge}"
+                                   IsVisible="{Binding IsActive, Converter={StaticResource InvertedBool}}" />
+                            <Label Grid.Column="2" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="3" Style="{StaticResource BottomBar}">
+            <Button Text="Neuer Artikel" Command="{Binding AddCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

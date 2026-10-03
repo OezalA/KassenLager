@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0-android</TargetFramework>
+		<SupportedOSPlatformVersion>26.0</SupportedOSPlatformVersion>
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>KassenLager.App</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+
+		<!-- Generate C# from XAML at compile time; compiled bindings are mandatory (trim safety). -->
+		<MauiXamlInflator>SourceGen</MauiXamlInflator>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		<WarningsAsErrors>$(WarningsAsErrors);XC0022;XC0023;XC0025</WarningsAsErrors>
+
+		<ApplicationTitle>KassenLager</ApplicationTitle>
+		<ApplicationId>de.kassenlager.app</ApplicationId>
+		<ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<!-- APK instead of AAB: the app is sideloaded, not published to a store. -->
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+		<!-- Phones only; x86/x64 are emulator ABIs. -->
+		<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>
+		<TrimMode>partial</TrimMode>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- EF Core discovers entities, configurations and migrations via reflection. -->
+		<TrimmerRootAssembly Include="KassenLager.Core" />
+		<TrimmerRootAssembly Include="KassenLager.Data" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#1F5FAD" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1F5FAD" BaseSize="128,128" />
+		<MauiImage Include="Resources\Images\*" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+		<PackageReference Include="Microsoft.Maui.Controls" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\KassenLager.Core\KassenLager.Core.csproj" />
+		<ProjectReference Include="..\KassenLager.Data\KassenLager.Data.csproj" />
+	</ItemGroup>
+
+</Project>

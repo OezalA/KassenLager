@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Customers.CustomerListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:domain="clr-namespace:KassenLager.Core.Domain;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Customers"
+    x:DataType="vm:CustomerListViewModel"
+    Title="Kunden">
+
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="domain:Customer">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:CustomerListViewModel}}, x:DataType=vm:CustomerListViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="{Binding Name}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding ShortName}" Style="{StaticResource ItemSubtitle}"
+                                       IsVisible="{Binding ShortName, Converter={StaticResource HasText}}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Style="{StaticResource InactiveBadge}"
+                                   IsVisible="{Binding IsActive, Converter={StaticResource InvertedBool}}" />
+                            <Label Grid.Column="2" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Neuer Kunde" Command="{Binding AddCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

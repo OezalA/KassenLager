@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="KassenLager.App.Views.MorePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels"
+    x:DataType="vm:MoreViewModel"
+    Title="Mehr">
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Article}" Text="Artikel"
+                              Detail="Modelle, Ersatzteile und Material" Command="{Binding OpenArticlesCommand}" />
+
+            <Label Text="App" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Settings}" Text="Einstellungen"
+                              Detail="Kunden, Kategorien, Einheiten, Benutzername, Darstellung" Command="{Binding OpenSettingsCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

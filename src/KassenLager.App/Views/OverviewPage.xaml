@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.OverviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels"
+    x:DataType="vm:OverviewViewModel"
+    Title="Übersicht">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            <Label Text="{Binding Greeting}" FontSize="26" FontFamily="OpenSansSemibold" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsUserNameMissing}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Person}" />
+                    <Label Grid.Column="1"
+                           Text="Tipp: Benutzernamen in den Einstellungen hinterlegen – er erscheint später auf dem Inventurbericht." />
+                </Grid>
+            </Border>
+
+            <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding CustomerCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="Kunden" Style="{StaticResource ItemSubtitle}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding CategoryCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="Kategorien" Style="{StaticResource ItemSubtitle}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding ArticleCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="Artikel" Style="{StaticResource ItemSubtitle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Button Text="Artikel verwalten" Command="{Binding OpenArticlesCommand}" />
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Nächste Ausbaustufe" FontFamily="OpenSansSemibold" />
+                    <Label Style="{StaticResource Hint}"
+                           Text="Bestand je Kunde, Buchungen, Suche, Ausgaben an Filialen und die Geräteverwaltung folgen mit dem nächsten Update." />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

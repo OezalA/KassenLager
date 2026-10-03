@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Articles.ArticleEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Articles"
+    x:DataType="vm:ArticleEditViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="Bezeichnung *" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Name}" MaxLength="{Binding NameMaxLength}" Placeholder="z. B. Bondrucker Thermo" />
+
+                <Label Text="Kategorie *" Style="{StaticResource FormLabel}" />
+                <Picker Title="Kategorie wählen" ItemsSource="{Binding Categories}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=services:CategorySummary}"
+                        SelectedItem="{Binding SelectedCategory}" />
+                <Label Text="{Binding TrackingHint}" Style="{StaticResource Hint}"
+                       IsVisible="{Binding TrackingHint, Converter={StaticResource HasText}}" />
+
+                <Label Text="Hersteller" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Manufacturer}" MaxLength="{Binding ManufacturerMaxLength}" />
+
+                <Label Text="{Binding ModelLabel}" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Model}" MaxLength="{Binding ModelMaxLength}" />
+
+                <Label Text="Artikelnummer (Zentrale)" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding ArticleNumber}" MaxLength="{Binding ArticleNumberMaxLength}" />
+
+                <Label Text="EAN / Barcode" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Ean}" MaxLength="{Binding EanMaxLength}" Keyboard="Numeric" />
+
+                <Label Text="Einheit *" Style="{StaticResource FormLabel}" />
+                <Picker Title="Einheit wählen" ItemsSource="{Binding Units}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=services:UnitSummary}"
+                        SelectedItem="{Binding SelectedUnit}" />
+
+                <Label Text="Notiz" Style="{StaticResource FormLabel}" />
+                <Editor Text="{Binding Note}" MaxLength="{Binding NoteMaxLength}" AutoSize="TextChanges" MinimumHeightRequest="96" />
+
+                <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="52" Margin="0,8,0,0">
+                    <Label Text="Aktiv" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding IsActive}" />
+                </Grid>
+                <Label Style="{StaticResource Hint}" Text="Inaktive Artikel bleiben in der Historie, werden aber nicht mehr angeboten." />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Speichern" Command="{Binding SaveCommand}" />
+            <Button Text="Löschen" Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}" IsVisible="{Binding IsExisting}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="KassenLager.App.Views.BookingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    Title="Buchen">
+
+    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
+        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Booking}" FontSize="48" HorizontalOptions="Center" />
+        <Label Text="Buchen" FontSize="22" FontFamily="OpenSansSemibold" HorizontalOptions="Center" />
+        <Label Style="{StaticResource Hint}" HorizontalTextAlignment="Center"
+               Text="Wareneingang, Entnahme, Ausgabe an Filiale, Rücknahme, Rücksendung und Storno – folgen mit dem nächsten Update." />
+    </VerticalStackLayout>
+</ContentPage>

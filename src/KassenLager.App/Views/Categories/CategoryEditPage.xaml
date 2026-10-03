@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Categories.CategoryEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Categories"
+    x:DataType="vm:CategoryEditViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="Name *" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Name}" MaxLength="{Binding NameMaxLength}" />
+
+                <Label Text="Erfassungsart *" Style="{StaticResource FormLabel}" />
+                <Picker ItemsSource="{Binding TrackingTypeChoices}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=shared:TrackingTypeChoice}"
+                        SelectedItem="{Binding SelectedTrackingType}"
+                        IsEnabled="{Binding CanChangeTrackingType}" />
+                <Label Text="{Binding TrackingTypeHint}" Style="{StaticResource Hint}" />
+
+                <Label Text="Sortierung" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding SortOrderText}" Keyboard="Numeric" />
+                <Label Style="{StaticResource Hint}" Text="Kleinere Zahlen erscheinen in Listen weiter oben." />
+
+                <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="52" Margin="0,8,0,0">
+                    <Label Text="Aktiv" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding IsActive}" />
+                </Grid>
+                <Label Style="{StaticResource Hint}" Text="Inaktive Kategorien werden für neue Artikel nicht mehr angeboten." />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Speichern" Command="{Binding SaveCommand}" />
+            <Button Text="Löschen" Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}" IsVisible="{Binding IsExisting}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>
