@@ -26,6 +26,10 @@ public sealed class MenuRow : ContentView
         nameof(Command), typeof(ICommand), typeof(MenuRow), null,
         propertyChanged: (b, _, value) => ((MenuRow)b)._tap.Command = (ICommand?)value);
 
+    public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(
+        nameof(CommandParameter), typeof(object), typeof(MenuRow), null,
+        propertyChanged: (b, _, value) => ((MenuRow)b)._tap.CommandParameter = value);
+
     private readonly Label _icon = new();
     private readonly Label _text = new();
     private readonly Label _detail = new() { IsVisible = false };
@@ -78,5 +82,11 @@ public sealed class MenuRow : ContentView
     {
         get => (ICommand?)GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
+    }
+
+    public object? CommandParameter
+    {
+        get => GetValue(CommandParameterProperty);
+        set => SetValue(CommandParameterProperty, value);
     }
 }

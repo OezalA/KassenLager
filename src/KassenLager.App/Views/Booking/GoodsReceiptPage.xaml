@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Booking.GoodsReceiptPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:domain="clr-namespace:KassenLager.Core.Domain;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Booking"
+    x:DataType="vm:GoodsReceiptViewModel"
+    Title="Wareneingang">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="Kunde *" Style="{StaticResource FormLabel}" />
+                <Picker Title="Kunde wählen" ItemsSource="{Binding Customers}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=domain:Customer}"
+                        SelectedItem="{Binding SelectedCustomer}" />
+
+                <Label Text="Artikel *" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource SelectionField}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PickArticleCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Artikel wählen …" Style="{StaticResource Hint}" FontSize="16" VerticalOptions="Center"
+                               IsVisible="{Binding HasArticle, Converter={StaticResource InvertedBool}}" />
+                        <VerticalStackLayout VerticalOptions="Center" IsVisible="{Binding HasArticle}">
+                            <Label Text="{Binding SelectedArticle.Name}" FontFamily="OpenSansSemibold" />
+                            <Label Text="{Binding SelectedArticle.ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                    </Grid>
+                </Border>
+                <Label Text="{Binding StockText}" Style="{StaticResource Hint}" Margin="0,4,0,0"
+                       IsVisible="{Binding StockText, Converter={StaticResource HasText}}" />
+
+                <VerticalStackLayout IsVisible="{Binding IsQuantity}">
+                    <Label Text="Menge *" Style="{StaticResource FormLabel}" />
+                    <Entry Text="{Binding QuantityText}" Keyboard="Numeric" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsSerial}">
+                    <Label Text="Zustand *" Style="{StaticResource FormLabel}" />
+                    <Picker ItemsSource="{Binding StateChoices}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=vm:StateChoice}"
+                            SelectedItem="{Binding SelectedState}" />
+
+                    <Label Text="Seriennummern *" Style="{StaticResource FormLabel}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry Text="{Binding SerialInput}" MaxLength="{Binding SerialNumberMaxLength}" Placeholder="Seriennummer eingeben"
+                               ReturnType="Next" ReturnCommand="{Binding AddSerialCommand}" />
+                        <Button Grid.Column="1" Text="Hinzufügen" Command="{Binding AddSerialCommand}" />
+                    </Grid>
+                    <Label Text="{Binding SerialCountText}" Style="{StaticResource Hint}" Margin="0,6,0,0"
+                           IsVisible="{Binding SerialCountText, Converter={StaticResource HasText}}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding SerialNumbers}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SerialEntry">
+                                <VerticalStackLayout>
+                                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="52">
+                                        <VerticalStackLayout VerticalOptions="Center">
+                                            <Label Text="{Binding SerialNumber}" FontFamily="OpenSansSemibold" />
+                                            <Label Text="{Binding Hint}" Style="{StaticResource Hint}"
+                                                   IsVisible="{Binding Hint, Converter={StaticResource HasText}}" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Style="{StaticResource Icon}" Text="{x:Static app:Icons.Close}" Padding="14,10">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding RemoveSerialCommand, Source={RelativeSource AncestorType={x:Type vm:GoodsReceiptViewModel}}, x:DataType=vm:GoodsReceiptViewModel}"
+                                                    CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
+                                    <BoxView Style="{StaticResource Divider}" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <Label Text="Referenz (Bestell- oder Lieferscheinnummer)" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Reference}" MaxLength="{Binding ReferenceMaxLength}" />
+
+                <Label Text="Datum" Style="{StaticResource FormLabel}" />
+                <DatePicker Date="{Binding Date}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" />
+
+                <Label Text="Notiz" Style="{StaticResource FormLabel}" />
+                <Editor Text="{Binding Note}" MaxLength="{Binding NoteMaxLength}" AutoSize="TextChanges" MinimumHeightRequest="80" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Wareneingang buchen" Command="{Binding BookCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

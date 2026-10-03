@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Devices.DeviceListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Devices"
+    x:DataType="vm:DeviceListViewModel"
+    Title="Geräte">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <SearchBar Text="{Binding FilterText}" Placeholder="Seriennummer, Modell, Bezeichnung" Margin="8,4,8,0" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="8" Padding="16,0">
+            <Picker Title="Zustand" ItemsSource="{Binding StateFilters}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=shared:StateFilter}"
+                    SelectedItem="{Binding SelectedStateFilter}" />
+            <Picker Grid.Column="1" Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                    SelectedItem="{Binding SelectedCustomerFilter}" />
+        </Grid>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.Header>
+                <Label Text="{Binding CountText}" Style="{StaticResource Hint}" Margin="16,8,16,0" />
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Keine Geräte gefunden." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:DeviceListItem">
+                    <controls:DeviceRow Item="{Binding .}"
+                                        Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:DeviceListViewModel}}, x:DataType=vm:DeviceListViewModel}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</views:ContentPageBase>

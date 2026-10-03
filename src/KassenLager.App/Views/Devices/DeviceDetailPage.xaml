@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Devices.DeviceDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:booking="clr-namespace:KassenLager.App.ViewModels.Booking"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Devices"
+    x:DataType="vm:DeviceDetailViewModel"
+    Title="Gerät">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8,16,24" Spacing="12">
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding Detail.Device.SerialNumber, StringFormat='SN {0}'}" FontSize="22" FontFamily="OpenSansSemibold" />
+                    <controls:Badge Text="{Binding Detail.Device.StateName}" IsDanger="{Binding Detail.Device.IsDefective}" Margin="0,4,0,4" />
+
+                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenArticleCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="{Binding Detail.Device.ArticleName}" FontFamily="OpenSansSemibold" />
+                            <Label Text="{Binding Detail.Device.ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                    </Grid>
+
+                    <controls:FieldRow Caption="Kategorie" Value="{Binding Detail.CategoryName}" />
+                    <controls:FieldRow Caption="Kunde" Value="{Binding Detail.Device.CustomerName}" />
+                    <controls:FieldRow Caption="Letzte Buchung" Value="{Binding Detail.Device.StateChangedLocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+                    <controls:FieldRow Caption="Erfasst am" Value="{Binding Detail.CreatedLocalTime, StringFormat='{0:dd.MM.yyyy}'}" />
+
+                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48" Margin="0,8,0,0">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditNoteCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Notiz" Style="{StaticResource FormLabel}" Margin="0" />
+                            <Label Text="{Binding Detail.Note}" IsVisible="{Binding HasNote}" />
+                            <Label Text="Tippen, um eine Notiz zu erfassen" Style="{StaticResource Hint}"
+                                   IsVisible="{Binding HasNote, Converter={StaticResource InvertedBool}}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Icon}" Text="{x:Static app:Icons.Edit}" FontSize="22" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="8">
+                <Button Text="An Filiale ausgeben" Command="{Binding IssueCommand}" IsVisible="{Binding CanIssue}" />
+                <Button Text="Rücknahme aus Filiale" Command="{Binding ReturnFromBranchCommand}" IsVisible="{Binding CanReturnFromBranch}" />
+                <Button Text="Zustand ändern" Style="{StaticResource SecondaryButton}" IsVisible="{Binding IsInStore}"
+                        Command="{Binding DeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.StateChange}" />
+                <Button Text="An Zentrale zurücksenden" Style="{StaticResource SecondaryButton}" IsVisible="{Binding IsInStore}"
+                        Command="{Binding DeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.ReturnToHeadquarters}" />
+                <Button Text="Ausmustern" Style="{StaticResource DangerButton}" IsVisible="{Binding IsInStore}"
+                        Command="{Binding DeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.Disposal}" />
+            </VerticalStackLayout>
+
+            <Label Text="Verlauf" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
+            <VerticalStackLayout Margin="-16,0" BindableLayout.ItemsSource="{Binding Detail.History}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="services:MovementListItem">
+                        <controls:MovementRow Item="{Binding .}"
+                                              Command="{Binding OpenMovementCommand, Source={RelativeSource AncestorType={x:Type vm:DeviceDetailViewModel}}, x:DataType=vm:DeviceDetailViewModel}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

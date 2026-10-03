@@ -157,8 +157,9 @@ public sealed partial class ArticleEditViewModel(
 
         if (await RunAsync(() => articles.DeleteAsync(id)))
         {
+            // Existing articles are edited from their detail page, which no longer exists.
             await Dialogs.ToastAsync("Artikel gelöscht");
-            await navigation.GoBackAsync();
+            await navigation.GoBackAsync(levels: 2);
         }
     }
 }

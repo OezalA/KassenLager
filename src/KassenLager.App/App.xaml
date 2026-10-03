@@ -13,6 +13,7 @@
 
             <toolkit:InvertedBoolConverter x:Key="InvertedBool" />
             <toolkit:IsStringNotNullOrEmptyConverter x:Key="HasText" />
+            <toolkit:IsNotNullConverter x:Key="IsNotNull" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

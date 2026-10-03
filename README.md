@@ -4,7 +4,7 @@ An offline-first Android app for managing the spare-parts store of a field servi
 
 It answers the questions that come up every day in the field — *"Do I have this model in stock for this customer?"*, *"Which device did I leave at which branch?"*, *"What do I need to reorder?"* — and turns the twice-yearly stock count into a scan-and-tap workflow with an Excel report at the end.
 
-> **Status:** Phase 1 of 6 complete — solution structure, database, master data management. See [Roadmap](#roadmap).
+> **Status:** Phase 2 of 6 complete — master data, stock ledger with devices, bookings, loans to branches, storno and search. See [Roadmap](#roadmap).
 
 ## The problem
 
@@ -19,7 +19,7 @@ It answers the questions that come up every day in the field — *"Do I have thi
 | Area | Status |
 |---|---|
 | Customers, categories (serial- or quantity-tracked), units, articles | ✅ Phase 1 |
-| Stock per article × customer, devices, movements, storno, loans to branches, search | Phase 2 |
+| Stock per article × customer, devices, movements, storno, loans to branches, search | ✅ Phase 2 |
 | Excel import with validation and preview, exports, full backup & restore | Phase 3 |
 | Reorder suggestions and orders per customer, goods receipt from orders | Phase 4 |
 | Stock count (by serial number and quantity) with Excel report | Phase 5 |
@@ -45,7 +45,9 @@ tests/
 
 ### Design decisions
 
-- **Movements are the single source of truth for stock** (from Phase 2). Quantities are derived from the immutable movement ledger instead of being stored separately, so stock and history cannot drift apart. Mistakes are corrected with a linked storno movement, never by editing or deleting.
+- **Movements are the single source of truth for stock.** Quantities are derived from the immutable movement ledger instead of being stored separately, so stock and history cannot drift apart. Mistakes are corrected with a linked storno movement, never by editing or deleting.
+- **Devices carry their state, movements record every transition.** Each device movement stores the state before and after; the test suite replays the complete ledger after every test and checks that the state chains, stock changes and device counts agree.
+- **Storno unwinds history step by step:** a movement can be reversed once, a reversal cannot be reversed, and a device movement only while it is the device's latest — so every intermediate state stays consistent. Reversing the movement that created a device voids it (history kept, serial number free again).
 - **Customer integrity:** every stock record, device and movement belongs to exactly one customer; there are no transfers between customers.
 - **Offline and private by design:** no internet permission in release builds, Android cloud auto-backup disabled, no accounts, no analytics. Backups are explicit file exports.
 - **Case-insensitive uniqueness** (names, article numbers) is checked Unicode-aware in the services (SQLite's `NOCASE` only folds ASCII) and backed by unique indexes.
@@ -75,7 +77,7 @@ dotnet ef migrations add <Name> --project src/KassenLager.Data --startup-project
 ## Roadmap
 
 1. ✅ Solution structure, database, seed data, master data management, settings
-2. Movements, stock and devices, loans to branches and returns, storno, search, dashboard
+2. ✅ Movements, stock and devices, loans to branches and returns, storno, search, dashboard
 3. Excel import (template, validation, preview), exports, backup and restore
 4. Reorder suggestions, orders, goods receipt from orders
 5. Stock count and count report

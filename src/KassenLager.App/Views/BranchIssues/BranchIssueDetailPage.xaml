@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.BranchIssues.BranchIssueDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.BranchIssues"
+    x:DataType="vm:BranchIssueDetailViewModel"
+    Title="Ausgabe">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8,16,24" Spacing="12">
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout>
+                    <Label Text="{Binding Issue.Branch}" FontSize="22" FontFamily="OpenSansSemibold" />
+                    <HorizontalStackLayout Spacing="8" Margin="0,4,0,0">
+                        <controls:Badge Text="{Binding Issue.KindName}" />
+                        <controls:Badge Text="zurückgenommen" IsVisible="{Binding Issue.IsReturned}" />
+                        <controls:Badge Text="storniert" IsDanger="True" IsVisible="{Binding Issue.IsReversed}" />
+                    </HorizontalStackLayout>
+                    <controls:FieldRow Caption="Datum" Value="{Binding Issue.LocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+                    <controls:FieldRow Caption="Kunde" Value="{Binding Issue.CustomerName}" />
+                    <controls:FieldRow Caption="Ausgegebenes Gerät" Value="{Binding Issue.DeviceText}" />
+                    <controls:FieldRow Caption="Ticketnummer" Value="{Binding Issue.Reference}" />
+                    <controls:FieldRow Caption="Notiz" Value="{Binding Issue.Note}" />
+                    <controls:FieldRow Caption="Kundengerät – Seriennummer" Value="{Binding Issue.CustomerDeviceSerialNumber}" />
+                    <controls:FieldRow Caption="Kundengerät – Modell" Value="{Binding Issue.CustomerDeviceModel}" />
+                    <controls:FieldRow Caption="Zurückgenommen am" Value="{Binding Issue.ReturnedLocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+                    <controls:FieldRow Caption="Zurückgenommen aus" Value="{Binding Issue.ReturnBranch}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Kundengerät an Zentrale" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
+            <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="52">
+                <Label Text="An Zentrale gesendet" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding IsSent}" />
+            </Grid>
+            <DatePicker Date="{Binding SentDate}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" IsVisible="{Binding IsSent}" />
+            <Button Text="Versanddatum speichern" Style="{StaticResource SecondaryButton}" Command="{Binding SaveSentDateCommand}" />
+
+            <Label Style="{StaticResource Hint}" Margin="0,8,0,0"
+                   Text="Ausgaben werden nur zur Historie gespeichert – es gibt keine Erinnerung. Korrekturen über Storno der Buchung." />
+            <Button Text="Gerät öffnen" Command="{Binding OpenDeviceCommand}" />
+            <Button Text="Buchung öffnen (Storno)" Style="{StaticResource SecondaryButton}" Command="{Binding OpenMovementCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

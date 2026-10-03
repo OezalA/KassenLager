@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Branch text field with tappable suggestions; BindingContext is a BranchInput. -->
+<ContentView
+    x:Class="KassenLager.App.Controls.BranchField"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:booking="clr-namespace:KassenLager.App.ViewModels.Booking"
+    x:DataType="booking:BranchInput">
+
+    <VerticalStackLayout Spacing="6">
+        <Entry Text="{Binding Text}" MaxLength="{Binding MaxLength}" Placeholder="z. B. Filiale 1234 Musterstadt" />
+        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Suggestions}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Border Style="{StaticResource Chip}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding ChooseCommand, Source={RelativeSource AncestorType={x:Type booking:BranchInput}}, x:DataType=booking:BranchInput}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding .}" VerticalOptions="Center" />
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+    </VerticalStackLayout>
+</ContentView>

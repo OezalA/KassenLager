@@ -1,15 +1,88 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<views:ContentPageBase
     x:Class="KassenLager.App.Views.SearchPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels"
+    x:DataType="vm:SearchViewModel"
     Title="Suche">
 
-    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
-        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Search}" FontSize="48" HorizontalOptions="Center" />
-        <Label Text="Suche" FontSize="22" FontFamily="OpenSansSemibold" HorizontalOptions="Center" />
-        <Label Style="{StaticResource Hint}" HorizontalTextAlignment="Center"
-               Text="Suche nach Modell, Hersteller, Bezeichnung, Artikelnummer, EAN und Seriennummer mit Bestand je Kunde – folgt mit dem nächsten Update." />
-    </VerticalStackLayout>
-</ContentPage>
+    <Grid RowDefinitions="Auto,Auto,*">
+        <SearchBar Text="{Binding Query}" SearchCommand="{Binding SubmitCommand}"
+                   Placeholder="Modell, Seriennummer, Artikelnr. …" Margin="8,4,8,0" />
+
+        <Picker Grid.Row="1" Margin="16,0" Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                ItemDisplayBinding="{Binding Name, x:DataType=vm:CustomerFilter}"
+                SelectedItem="{Binding SelectedCustomerFilter}" />
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Articles}" SelectionMode="None">
+            <CollectionView.Header>
+                <VerticalStackLayout>
+                    <Label Text="{Binding StatusText}" Style="{StaticResource Hint}" Margin="16,12"
+                           IsVisible="{Binding StatusText, Converter={StaticResource HasText}}" />
+
+                    <VerticalStackLayout IsVisible="{Binding HasDevices}">
+                        <Label Text="Geräte (Seriennummer)" Style="{StaticResource SectionHeader}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Devices}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="services:DeviceListItem">
+                                    <controls:DeviceRow Item="{Binding .}"
+                                                        Command="{Binding OpenDeviceCommand, Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel}" />
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Label Text="Artikel" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasArticles}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:ArticleSearchHit">
+                    <VerticalStackLayout>
+                        <Grid Padding="16,12,16,4" ColumnDefinitions="*,Auto" MinimumHeightRequest="52">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenArticleCommand, Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Article.Name}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding Article.ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}"
+                                       IsVisible="{Binding Article.ManufacturerAndModel, Converter={StaticResource HasText}}" />
+                                <Label Text="{Binding Article.CategoryName}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                        </Grid>
+
+                        <Label Text="Kein Bestand" Style="{StaticResource Hint}" Margin="16,0,16,12"
+                               IsVisible="{Binding HasStock, Converter={StaticResource InvertedBool}}" />
+
+                        <VerticalStackLayout Padding="16,0,16,8" BindableLayout.ItemsSource="{Binding Stock}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="services:StockLine">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" MinimumHeightRequest="48">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding OpenStockCommand, Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel}"
+                                                CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                        <Label Text="{Binding CustomerName}" VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="{Binding StockText}" FontFamily="OpenSansSemibold" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</views:ContentPageBase>

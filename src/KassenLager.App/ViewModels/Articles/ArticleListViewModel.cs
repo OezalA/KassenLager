@@ -63,7 +63,7 @@ public sealed partial class ArticleListViewModel(
     private Task AddAsync() => navigation.GoToAsync(Routes.ArticleEdit);
 
     [RelayCommand]
-    private Task OpenAsync(ArticleListItem article) => navigation.GoToAsync(Routes.ArticleEdit, article.Id);
+    private Task OpenAsync(ArticleListItem article) => navigation.GoToAsync(Routes.ArticleDetail, article.Id);
 
     private void ApplyFilter()
     {

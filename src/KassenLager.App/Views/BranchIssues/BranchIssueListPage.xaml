@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.BranchIssues.BranchIssueListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.BranchIssues"
+    x:DataType="vm:BranchIssueListViewModel"
+    Title="Ausgaben">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <SearchBar Text="{Binding FilterText}" Placeholder="Filiale, Seriennummer, Ticket …" Margin="8,4,8,0" />
+
+        <Picker Grid.Row="1" Margin="16,0" Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                SelectedItem="{Binding SelectedCustomerFilter}" />
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.Header>
+                <Label Text="{Binding CountText}" Style="{StaticResource Hint}" Margin="16,8,16,0" />
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Keine Ausgaben gefunden." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:BranchIssueListItem">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:BranchIssueListViewModel}}, x:DataType=vm:BranchIssueListViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Branch}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding DeviceText}" Style="{StaticResource ItemSubtitle}" />
+                                <Label Text="{Binding CustomerDeviceText, StringFormat='Kundengerät: {0}'}" Style="{StaticResource ItemSubtitle}" FontSize="13"
+                                       IsVisible="{Binding CustomerDeviceText, Converter={StaticResource HasText}}" />
+                                <Label Text="{Binding CustomerName}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding LocalTime, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource Hint}" HorizontalOptions="End" />
+                                <controls:Badge Text="{Binding KindName}" HorizontalOptions="End" />
+                                <controls:Badge Text="zurückgenommen" HorizontalOptions="End" IsVisible="{Binding IsReturned}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</views:ContentPageBase>

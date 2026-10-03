@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Movements.MovementDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Movements"
+    x:DataType="vm:MovementDetailViewModel"
+    Title="Buchung">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8,16,24" Spacing="12">
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout>
+                    <Label Text="{Binding Detail.Movement.TypeName}" FontSize="22" FontFamily="OpenSansSemibold" />
+                    <Label Text="{Binding Detail.Movement.LocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" Style="{StaticResource Hint}" />
+                    <controls:Badge Text="storniert" IsDanger="True" Margin="0,6,0,0" IsVisible="{Binding Detail.Movement.IsReversed}" />
+
+                    <controls:FieldRow Caption="Kunde" Value="{Binding Detail.Movement.CustomerName}" />
+                    <controls:FieldRow Caption="Artikel" Value="{Binding Detail.Movement.ArticleName}" />
+                    <controls:FieldRow Caption="Seriennummer" Value="{Binding Detail.Movement.SerialNumber}" />
+                    <controls:FieldRow Caption="Bestandsänderung" Value="{Binding Detail.Movement.QuantityText}" />
+                    <controls:FieldRow Caption="Zustand" Value="{Binding Detail.Movement.StateText}" />
+                    <controls:FieldRow Caption="Filiale" Value="{Binding Detail.Movement.Branch}" />
+                    <controls:FieldRow Caption="Referenz / Ticket" Value="{Binding Detail.Movement.Reference}" />
+                    <controls:FieldRow Caption="Notiz" Value="{Binding Detail.Movement.Note}" />
+                    <controls:FieldRow Caption="Erfasst am" Value="{Binding Detail.RecordedLocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="{Binding ReversalInfo}" Style="{StaticResource SecondaryButton}" Command="{Binding OpenLinkedCommand}"
+                    IsVisible="{Binding ReversalInfo, Converter={StaticResource HasText}}" />
+            <Label Text="{Binding Detail.ReversalBlocker}" Style="{StaticResource Hint}" IsVisible="{Binding ShowBlocker}" />
+
+            <Button Text="Gerät öffnen" Command="{Binding OpenDeviceCommand}"
+                    IsVisible="{Binding Detail.Movement.SerialNumber, Converter={StaticResource HasText}}" />
+            <Button Text="Ausgabe öffnen" Style="{StaticResource SecondaryButton}" Command="{Binding OpenBranchIssueCommand}"
+                    IsVisible="{Binding Detail.BranchIssueId, Converter={StaticResource IsNotNull}}" />
+            <Button Text="Artikel öffnen" Style="{StaticResource SecondaryButton}" Command="{Binding OpenArticleCommand}" />
+            <Button Text="Stornieren" Style="{StaticResource DangerButton}" Command="{Binding ReverseCommand}"
+                    IsVisible="{Binding Detail.CanReverse}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

@@ -4,12 +4,48 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:booking="clr-namespace:KassenLager.App.ViewModels.Booking"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels"
+    x:DataType="vm:BookingViewModel"
     Title="Buchen">
 
-    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center">
-        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Booking}" FontSize="48" HorizontalOptions="Center" />
-        <Label Text="Buchen" FontSize="22" FontFamily="OpenSansSemibold" HorizontalOptions="Center" />
-        <Label Style="{StaticResource Hint}" HorizontalTextAlignment="Center"
-               Text="Wareneingang, Entnahme, Ausgabe an Filiale, Rücknahme, Rücksendung und Storno – folgen mit dem nächsten Update." />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Padding="0,0,0,24">
+            <Label Text="Material" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.GoodsReceipt}" Text="Wareneingang"
+                              Detail="Material von der Zentrale einbuchen"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.GoodsReceipt}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Consumption}" Text="Entnahme / Verbrauch"
+                              Detail="Teile für eine Reparatur verwenden"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Consumption}" />
+
+            <Label Text="Filiale" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.BranchIssue}" Text="Ausgabe an Filiale"
+                              Detail="Leihgerät oder dauerhafter Einbau"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchIssueBooking}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.BranchReturn}" Text="Rücknahme aus Filiale"
+                              Detail="Gerät zurück ins Lager nehmen"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchReturnBooking}" />
+
+            <Label Text="Gerät im Lager" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.ReturnToHeadquarters}" Text="Rücksendung an Zentrale"
+                              Detail="Meist defekte Geräte zur Reparatur"
+                              Command="{Binding OpenDeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.ReturnToHeadquarters}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.StateChange}" Text="Zustandsänderung"
+                              Detail="Neu, gebraucht oder defekt – bleibt im Lager"
+                              Command="{Binding OpenDeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.StateChange}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Disposal}" Text="Ausmusterung"
+                              Detail="Gerät verschrotten"
+                              Command="{Binding OpenDeviceActionCommand}" CommandParameter="{x:Static booking:DeviceAction.Disposal}" />
+
+            <Label Text="Historie" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Journal}" Text="Buchungsjournal"
+                              Detail="Alle Buchungen, Storno"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Movements}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.BranchIssues}" Text="Ausgaben"
+                              Detail="An Filialen ausgegebene Geräte"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchIssues}" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

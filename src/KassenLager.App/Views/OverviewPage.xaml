@@ -4,14 +4,66 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
     xmlns:views="clr-namespace:KassenLager.App.Views"
     xmlns:vm="clr-namespace:KassenLager.App.ViewModels"
     x:DataType="vm:OverviewViewModel"
     Title="Übersicht">
 
     <ScrollView>
-        <VerticalStackLayout Padding="16" Spacing="16">
+        <VerticalStackLayout Padding="16" Spacing="12">
             <Label Text="{Binding Greeting}" FontSize="26" FontFamily="OpenSansSemibold" />
+
+            <!-- Looks like a search box; opens the search tab. -->
+            <Border Style="{StaticResource SelectionField}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenSearchCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Search}" />
+                    <Label Grid.Column="1" Text="Modell oder Seriennummer suchen …" Style="{StaticResource Hint}" FontSize="16" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                <Border Style="{StaticResource QuickAction}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchIssueBooking}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.BranchIssue}" HorizontalOptions="Center" FontSize="30" />
+                        <Label Text="Ausgabe an Filiale" Style="{StaticResource QuickActionText}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource QuickAction}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchReturnBooking}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.BranchReturn}" HorizontalOptions="Center" FontSize="30" />
+                        <Label Text="Rücknahme" Style="{StaticResource QuickActionText}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource QuickAction}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Consumption}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Consumption}" HorizontalOptions="Center" FontSize="30" />
+                        <Label Text="Entnahme" Style="{StaticResource QuickActionText}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource QuickAction}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.GoodsReceipt}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                        <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.GoodsReceipt}" HorizontalOptions="Center" FontSize="30" />
+                        <Label Text="Wareneingang" Style="{StaticResource QuickActionText}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
 
             <Border Style="{StaticResource Card}" IsVisible="{Binding IsUserNameMissing}">
                 <Border.GestureRecognizers>
@@ -24,37 +76,58 @@
                 </Grid>
             </Border>
 
-            <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
-            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout>
-                        <Label Text="{Binding CustomerCount}" Style="{StaticResource StatValue}" />
-                        <Label Text="Kunden" Style="{StaticResource ItemSubtitle}" />
+                        <Label Text="{Binding DefectiveCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="defekte Geräte im Lager" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
                 <Border Grid.Column="1" Style="{StaticResource Card}">
                     <VerticalStackLayout>
-                        <Label Text="{Binding CategoryCount}" Style="{StaticResource StatValue}" />
-                        <Label Text="Kategorien" Style="{StaticResource ItemSubtitle}" />
-                    </VerticalStackLayout>
-                </Border>
-                <Border Grid.Column="2" Style="{StaticResource Card}">
-                    <VerticalStackLayout>
-                        <Label Text="{Binding ArticleCount}" Style="{StaticResource StatValue}" />
-                        <Label Text="Artikel" Style="{StaticResource ItemSubtitle}" />
+                        <Label Text="{Binding BelowMinimumCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="Artikel unter Mindestbestand" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
 
-            <Button Text="Artikel verwalten" Command="{Binding OpenArticlesCommand}" />
+            <Label Text="Bestand je Kunde" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
+            <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Customers}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="services:CustomerStockSummary">
+                        <Border Style="{StaticResource Card}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenCustomerCommand, Source={RelativeSource AncestorType={x:Type vm:OverviewViewModel}}, x:DataType=vm:OverviewViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding CustomerName}" Style="{StaticResource ItemTitle}" />
+                                    <Label Text="{Binding DevicesText}" Style="{StaticResource ItemSubtitle}" />
+                                    <Label Text="{Binding MaterialText}" Style="{StaticResource ItemSubtitle}" />
+                                    <controls:Badge Text="{Binding BelowMinimumText}" IsDanger="True" IsVisible="{Binding IsBelowMinimum}" Margin="0,4,0,0" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="1" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
 
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="Nächste Ausbaustufe" FontFamily="OpenSansSemibold" />
-                    <Label Style="{StaticResource Hint}"
-                           Text="Bestand je Kunde, Buchungen, Suche, Ausgaben an Filialen und die Geräteverwaltung folgen mit dem nächsten Update." />
-                </VerticalStackLayout>
-            </Border>
+            <Label Text="Letzte Buchungen" Style="{StaticResource SectionHeader}" Margin="0,8,0,0" />
+            <Label Text="Noch keine Buchungen. Los geht es mit einem Wareneingang." Style="{StaticResource Hint}"
+                   IsVisible="{Binding HasMovements, Converter={StaticResource InvertedBool}}" />
+            <VerticalStackLayout Margin="-16,0" BindableLayout.ItemsSource="{Binding RecentMovements}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="services:MovementListItem">
+                        <controls:MovementRow Item="{Binding .}"
+                                              Command="{Binding OpenMovementCommand, Source={RelativeSource AncestorType={x:Type vm:OverviewViewModel}}, x:DataType=vm:OverviewViewModel}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+            <Button Text="Alle Buchungen" Style="{StaticResource SecondaryButton}" IsVisible="{Binding HasMovements}"
+                    Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Movements}" />
         </VerticalStackLayout>
     </ScrollView>
 </views:ContentPageBase>

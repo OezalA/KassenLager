@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Booking.DeviceActionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:domain="clr-namespace:KassenLager.Core.Domain;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Booking"
+    x:DataType="vm:DeviceActionViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="{Binding Hint}" Style="{StaticResource Hint}" Margin="0,8,0,0" />
+
+                <Label Text="Kunde *" Style="{StaticResource FormLabel}" />
+                <Picker Title="Kunde wählen" ItemsSource="{Binding Customers}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=domain:Customer}"
+                        SelectedItem="{Binding SelectedCustomer}" />
+
+                <Label Text="Gerät *" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource SelectionField}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PickDeviceCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Gerät wählen …" Style="{StaticResource Hint}" FontSize="16" VerticalOptions="Center"
+                               IsVisible="{Binding HasDevice, Converter={StaticResource InvertedBool}}" />
+                        <VerticalStackLayout VerticalOptions="Center" IsVisible="{Binding HasDevice}">
+                            <Label Text="{Binding SelectedDevice.SerialNumber, StringFormat='SN {0}'}" FontFamily="OpenSansSemibold" />
+                            <Label Text="{Binding SelectedDevice.ArticleText}" Style="{StaticResource ItemSubtitle}" />
+                            <Label Text="{Binding SelectedDevice.StateName}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout IsVisible="{Binding IsStateChange}">
+                    <Label Text="Neuer Zustand *" Style="{StaticResource FormLabel}" />
+                    <Picker ItemsSource="{Binding StateChoices}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=vm:StateChoice}"
+                            SelectedItem="{Binding SelectedNewState}" />
+                </VerticalStackLayout>
+
+                <Label Text="{Binding ReferenceLabel}" Style="{StaticResource FormLabel}" />
+                <Entry Text="{Binding Reference}" MaxLength="{Binding ReferenceMaxLength}" />
+
+                <Label Text="Datum" Style="{StaticResource FormLabel}" />
+                <DatePicker Date="{Binding Date}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" />
+
+                <Label Text="Notiz" Style="{StaticResource FormLabel}" />
+                <Editor Text="{Binding Note}" MaxLength="{Binding NoteMaxLength}" AutoSize="TextChanges" MinimumHeightRequest="80" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Buchen" Command="{Binding BookCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

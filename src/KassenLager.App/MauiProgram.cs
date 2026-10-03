@@ -4,15 +4,27 @@ using KassenLager.App.Services;
 using KassenLager.App.Services.Logging;
 using KassenLager.App.ViewModels;
 using KassenLager.App.ViewModels.Articles;
+using KassenLager.App.ViewModels.Booking;
+using KassenLager.App.ViewModels.BranchIssues;
 using KassenLager.App.ViewModels.Categories;
 using KassenLager.App.ViewModels.Customers;
+using KassenLager.App.ViewModels.Devices;
+using KassenLager.App.ViewModels.Movements;
+using KassenLager.App.ViewModels.Pickers;
 using KassenLager.App.ViewModels.Settings;
+using KassenLager.App.ViewModels.Stock;
 using KassenLager.App.ViewModels.Units;
 using KassenLager.App.Views;
 using KassenLager.App.Views.Articles;
+using KassenLager.App.Views.Booking;
+using KassenLager.App.Views.BranchIssues;
 using KassenLager.App.Views.Categories;
 using KassenLager.App.Views.Customers;
+using KassenLager.App.Views.Devices;
+using KassenLager.App.Views.Movements;
+using KassenLager.App.Views.Pickers;
 using KassenLager.App.Views.Settings;
+using KassenLager.App.Views.Stock;
 using KassenLager.App.Views.Units;
 using KassenLager.Core;
 using KassenLager.Data;
@@ -51,24 +63,41 @@ public static class MauiProgram
 
         builder.Services.AddSingleton(Preferences.Default);
         builder.Services.AddSingleton<ThemeService>();
+        builder.Services.AddSingleton<UserPreferences>();
         builder.Services.AddSingleton<IDialogService, DialogService>();
         builder.Services.AddSingleton<INavigationService, ShellNavigationService>();
+        builder.Services.AddSingleton<IPickerService, PickerService>();
         builder.Services.AddSingleton<AppShell>();
 
         builder.Services
             .AddPage<OverviewPage, OverviewViewModel>()
-            .AddPage<SearchPage>()
-            .AddPage<BookingPage>()
+            .AddPage<SearchPage, SearchViewModel>()
+            .AddPage<BookingPage, BookingViewModel>()
             .AddPage<InventoryPage>()
             .AddPage<MorePage, MoreViewModel>()
             .AddPage<SettingsPage, SettingsViewModel>()
             .AddPage<CustomerListPage, CustomerListViewModel>()
             .AddPage<CustomerEditPage, CustomerEditViewModel>()
+            .AddPage<CustomerStockPage, CustomerStockViewModel>()
             .AddPage<CategoryListPage, CategoryListViewModel>()
             .AddPage<CategoryEditPage, CategoryEditViewModel>()
             .AddPage<UnitListPage, UnitListViewModel>()
             .AddPage<ArticleListPage, ArticleListViewModel>()
-            .AddPage<ArticleEditPage, ArticleEditViewModel>();
+            .AddPage<ArticleDetailPage, ArticleDetailViewModel>()
+            .AddPage<ArticleEditPage, ArticleEditViewModel>()
+            .AddPage<DeviceListPage, DeviceListViewModel>()
+            .AddPage<DeviceDetailPage, DeviceDetailViewModel>()
+            .AddPage<BranchIssueListPage, BranchIssueListViewModel>()
+            .AddPage<BranchIssueDetailPage, BranchIssueDetailViewModel>()
+            .AddPage<MovementListPage, MovementListViewModel>()
+            .AddPage<MovementDetailPage, MovementDetailViewModel>()
+            .AddPage<GoodsReceiptPage, GoodsReceiptViewModel>()
+            .AddPage<ConsumptionPage, ConsumptionViewModel>()
+            .AddPage<BranchIssueFormPage, BranchIssueFormViewModel>()
+            .AddPage<BranchReturnFormPage, BranchReturnFormViewModel>()
+            .AddPage<DeviceActionPage, DeviceActionViewModel>()
+            .AddPage<ArticlePickerPage, ArticlePickerViewModel>()
+            .AddPage<DevicePickerPage, DevicePickerViewModel>();
 
         var app = builder.Build();
         RegisterGlobalExceptionLogging(app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Unhandled"));

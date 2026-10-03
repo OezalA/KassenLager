@@ -10,14 +10,29 @@
     Title="Mehr">
 
     <ScrollView>
-        <VerticalStackLayout>
+        <VerticalStackLayout Padding="0,0,0,24">
+            <Label Text="Bestand" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Stock}" Text="Bestand je Kunde"
+                              Detail="Nach Kategorien, unter Mindestbestand, defekt" Command="{Binding OpenCustomerStockCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Devices}" Text="Geräte"
+                              Detail="Alle Geräte mit Seriennummer und Verlauf"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Devices}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.BranchIssues}" Text="Ausgaben"
+                              Detail="An Filialen ausgegebene Geräte"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.BranchIssues}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Journal}" Text="Buchungsjournal"
+                              Detail="Alle Buchungen, Storno"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Movements}" />
+
             <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Article}" Text="Artikel"
-                              Detail="Modelle, Ersatzteile und Material" Command="{Binding OpenArticlesCommand}" />
+                              Detail="Modelle, Ersatzteile und Material, Mindestbestand"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Articles}" />
 
             <Label Text="App" Style="{StaticResource SectionHeader}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Settings}" Text="Einstellungen"
-                              Detail="Kunden, Kategorien, Einheiten, Benutzername, Darstellung" Command="{Binding OpenSettingsCommand}" />
+                              Detail="Kunden, Kategorien, Einheiten, Benutzername, Darstellung"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Settings}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

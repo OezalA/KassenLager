@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Pickers.DevicePickerPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Pickers"
+    x:DataType="vm:DevicePickerViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <SearchBar Text="{Binding FilterText}" Placeholder="Seriennummer oder Modell" Margin="8,4,8,0" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="16,0,8,0" IsVisible="{Binding CanFilterDefective}">
+            <Label Text="Nur defekte Geräte" VerticalOptions="Center" />
+            <Switch Grid.Column="1" IsToggled="{Binding DefectiveOnly}" />
+        </Grid>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="{Binding EmptyText}" Style="{StaticResource Hint}" HorizontalTextAlignment="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:DeviceListItem">
+                    <controls:DeviceRow Item="{Binding .}" ShowCustomer="False"
+                                        Command="{Binding SelectCommand, Source={RelativeSource AncestorType={x:Type vm:DevicePickerViewModel}}, x:DataType=vm:DevicePickerViewModel}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</views:ContentPageBase>

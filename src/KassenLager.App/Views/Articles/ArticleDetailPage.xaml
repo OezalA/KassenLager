@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Articles.ArticleDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Articles"
+    x:DataType="vm:ArticleDetailViewModel"
+    Title="Artikel">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Bearbeiten" Command="{Binding EditCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <VerticalStackLayout Padding="16,8,16,8" Spacing="2">
+            <Label Text="{Binding Title}" FontSize="22" FontFamily="OpenSansSemibold" />
+            <Label Text="{Binding ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}"
+                   IsVisible="{Binding ManufacturerAndModel, Converter={StaticResource HasText}}" />
+            <Label Text="{Binding Details}" Style="{StaticResource Hint}" />
+            <Label Style="{StaticResource InactiveBadge}" HorizontalOptions="Start" Margin="0,4,0,0" IsVisible="{Binding IsInactive}" />
+        </VerticalStackLayout>
+
+        <FlexLayout Grid.Row="1" Direction="Row" Padding="16,0,16,8">
+            <Button Text="Bestand" Style="{StaticResource SegmentButton}" FlexLayout.Grow="1" FlexLayout.Basis="0" Margin="0,0,4,0"
+                    Command="{Binding ShowTabCommand}" CommandParameter="{x:Static vm:ArticleDetailTab.Stock}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsStockTab}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="Geräte" Style="{StaticResource SegmentButton}" FlexLayout.Grow="1" FlexLayout.Basis="0" Margin="4,0"
+                    IsVisible="{Binding IsSerial}"
+                    Command="{Binding ShowTabCommand}" CommandParameter="{x:Static vm:ArticleDetailTab.Devices}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsDevicesTab}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="Buchungen" Style="{StaticResource SegmentButton}" FlexLayout.Grow="1" FlexLayout.Basis="0" Margin="4,0,0,0"
+                    Command="{Binding ShowTabCommand}" CommandParameter="{x:Static vm:ArticleDetailTab.Movements}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsMovementsTab}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </FlexLayout>
+
+        <!-- Stock per customer; tapping a line sets its minimum. -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding StockLines}" SelectionMode="None" IsVisible="{Binding IsStockTab}">
+            <CollectionView.Header>
+                <Label Text="Tippen, um den Mindestbestand festzulegen." Style="{StaticResource Hint}" Margin="16,4,16,4" />
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:StockLine">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding SetMinimumCommand, Source={RelativeSource AncestorType={x:Type vm:ArticleDetailViewModel}}, x:DataType=vm:ArticleDetailViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding CustomerName}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding MinimumText, TargetNullValue='Kein Mindestbestand'}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding StockText}" FontFamily="OpenSansSemibold" HorizontalOptions="End" />
+                                <controls:Badge Text="unter Minimum" IsDanger="True" HorizontalOptions="End" IsVisible="{Binding IsBelowMinimum}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Devices}" SelectionMode="None" IsVisible="{Binding IsDevicesTab}">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,0,8,0">
+                    <Picker Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                            SelectedItem="{Binding SelectedCustomerFilter}" />
+                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                        <Label Text="Nur Geräte im Lager" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding InStoreOnly}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Keine Geräte." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:DeviceListItem">
+                    <controls:DeviceRow Item="{Binding .}"
+                                        Command="{Binding OpenDeviceCommand, Source={RelativeSource AncestorType={x:Type vm:ArticleDetailViewModel}}, x:DataType=vm:ArticleDetailViewModel}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Movements}" SelectionMode="None" IsVisible="{Binding IsMovementsTab}">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,0,8,0">
+                    <Picker Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                            SelectedItem="{Binding SelectedCustomerFilter}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Keine Buchungen." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:MovementListItem">
+                    <controls:MovementRow Item="{Binding .}"
+                                          Command="{Binding OpenMovementCommand, Source={RelativeSource AncestorType={x:Type vm:ArticleDetailViewModel}}, x:DataType=vm:ArticleDetailViewModel}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</views:ContentPageBase>
