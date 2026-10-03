@@ -20,6 +20,14 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
 
     DbSet<AppSetting> AppSettings { get; }
 
+    DbSet<Device> Devices { get; }
+
+    DbSet<Movement> Movements { get; }
+
+    DbSet<BranchIssue> BranchIssues { get; }
+
+    DbSet<MinimumStock> MinimumStocks { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

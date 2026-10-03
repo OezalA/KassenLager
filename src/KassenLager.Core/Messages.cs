@@ -21,6 +21,38 @@ public static class Messages
     public const string ArticleUnitRequired = "Bitte eine Einheit auswählen.";
     public const string ArticleModelRequired = "Für Artikel mit Seriennummernerfassung ist das Modell ein Pflichtfeld.";
     public const string ArticleNumberExists = "Die Artikelnummer „{0}“ ist bereits dem Artikel „{1}“ zugeordnet.";
+    public const string ArticleHasHistory = "Der Artikel kann nicht gelöscht werden, weil es bereits Buchungen oder Geräte dazu gibt. Er kann stattdessen deaktiviert werden.";
+    public const string CustomerHasHistory = "Der Kunde kann nicht gelöscht werden, weil es bereits Buchungen oder Geräte für ihn gibt. Er kann stattdessen deaktiviert werden.";
+
+    public const string CustomerRequired = "Bitte einen Kunden auswählen.";
+    public const string ArticleRequired = "Bitte einen Artikel auswählen.";
+    public const string DeviceRequired = "Bitte ein Gerät auswählen.";
+    public const string DateInFuture = "Das Datum darf nicht in der Zukunft liegen.";
+    public const string QuantityOutOfRange = "Die Menge muss eine ganze Zahl zwischen 1 und {0} sein.";
+    public const string ArticleIsSerialTracked = "„{0}“ wird mit Seriennummern geführt. Bitte die Geräte einzeln buchen.";
+    public const string ArticleIsQuantityTracked = "„{0}“ wird nur nach Menge geführt und hat keine Seriennummern.";
+    public const string InsufficientStock = "Nicht genug Bestand: Von „{0}“ sind für {1} nur {2} {3} vorhanden.";
+    public const string MinimumOutOfRange = "Der Mindestbestand muss eine ganze Zahl zwischen 0 und {0} sein.";
+
+    public const string SerialNumbersRequired = "Bitte mindestens eine Seriennummer erfassen.";
+    public const string SerialNumberEnteredTwice = "Die Seriennummer „{0}“ wurde mehrfach eingegeben.";
+    public const string SerialNumberAmbiguous = "Die Seriennummer „{0}“ ist bei mehreren Artikeln erfasst. Bitte den Artikel auswählen.";
+    public const string SerialNumberUnknown = "Die Seriennummer „{0}“ ist noch nicht erfasst. Bitte den Artikel (Modell) auswählen, um das Gerät neu anzulegen.";
+    public const string DeviceAlreadyInStock = "Das Gerät „{0}“ ist bereits im Lager (Kunde {1}, Zustand „{2}“).";
+    public const string DeviceCustomerMismatch = "Das Gerät „{0}“ gehört zum Kunden {1}, nicht zu {2}. Buchungen zwischen Kunden sind nicht möglich.";
+    public const string DeviceNotInStock = "Das Gerät „{0}“ ist nicht im Lager (Zustand „{1}“).";
+    public const string DeviceDefectiveCannotBeIssued = "Das Gerät „{0}“ ist defekt und kann nicht ausgegeben werden.";
+    public const string DeviceVoided = "Das Gerät „{0}“ wurde storniert und kann nicht mehr gebucht werden.";
+    public const string DeviceStateUnchanged = "Das Gerät hat bereits den Zustand „{0}“.";
+    public const string StateNotAllowed = "Der Zustand „{0}“ ist hier nicht zulässig.";
+    public const string DateBeforeLastDeviceMovement = "Das Datum liegt vor der letzten Buchung dieses Geräts ({0:dd.MM.yyyy}).";
+    public const string CustomerDeviceSerialRequired = "Bei einem Leihgerät bitte die Seriennummer des Kundengeräts angeben.";
+
+    public const string ReversalOfReversal = "Eine Stornobuchung kann nicht storniert werden.";
+    public const string AlreadyReversed = "Diese Buchung wurde bereits storniert.";
+    public const string ReversalNotLatest = "Für dieses Gerät gibt es eine spätere Buchung. Bitte zuerst die spätere Buchung stornieren.";
+    public const string ReversalStateMismatch = "Storno nicht möglich: Der Zustand des Geräts passt nicht mehr zu dieser Buchung.";
+    public const string ReversalStockNegative = "Storno nicht möglich: Der Bestand von „{0}“ für {1} würde negativ (aktuell {2} {3}).";
 
     public static string Format(string template, params object?[] args) =>
         string.Format(System.Globalization.CultureInfo.GetCultureInfo("de-DE"), template, args);

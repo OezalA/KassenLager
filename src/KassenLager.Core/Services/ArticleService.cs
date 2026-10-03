@@ -29,17 +29,10 @@ public sealed record ArticleListItem(
     string UnitName,
     bool IsActive)
 {
-    public string ManufacturerAndModel =>
-        string.Join(" ", new[] { Manufacturer, Model }.Where(s => !string.IsNullOrWhiteSpace(s)));
+    public string ManufacturerAndModel => Labels.ManufacturerAndModel(Manufacturer, Model);
 
-    /// <summary>Case-insensitive partial match over the identifying text fields.</summary>
-    public bool Matches(string? text)
-    {
-        var term = TextKey.Clean(text);
-        return term is null
-            || new[] { Name, Manufacturer, Model, ArticleNumber, Ean }
-                .Any(v => v?.Contains(term, StringComparison.CurrentCultureIgnoreCase) == true);
-    }
+    /// <summary>Case-insensitive partial match of every word over the identifying text fields.</summary>
+    public bool Matches(string? text) => TextSearch.Matches(text, Name, Manufacturer, Model, ArticleNumber, Ean);
 }
 
 public sealed class ArticleService(IAppDbContextFactory dbFactory)
@@ -161,11 +154,16 @@ public sealed class ArticleService(IAppDbContextFactory dbFactory)
         return article.Id;
     }
 
-    // Phase 2 adds the "no movement history" guard; until then articles have no dependents.
+    /// <summary>Only articles without history can be deleted; others are deactivated instead.</summary>
     public async Task DeleteAsync(int id, CancellationToken ct = default)
     {
         await using var db = dbFactory.CreateDbContext();
         var article = await db.Articles.FirstOrDefaultAsync(a => a.Id == id, ct) ?? throw new EntityNotFoundException();
+        if (await db.Movements.AnyAsync(m => m.ArticleId == id, ct) || await db.Devices.AnyAsync(d => d.ArticleId == id, ct))
+        {
+            throw new BusinessRuleException(Messages.ArticleHasHistory);
+        }
+
         db.Articles.Remove(article);
         await db.SaveChangesAsync(ct);
     }

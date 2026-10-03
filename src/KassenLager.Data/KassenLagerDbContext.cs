@@ -18,6 +18,14 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
 
     public DbSet<AppSetting> AppSettings => Set<AppSetting>();
 
+    public DbSet<Device> Devices => Set<Device>();
+
+    public DbSet<Movement> Movements => Set<Movement>();
+
+    public DbSet<BranchIssue> BranchIssues => Set<BranchIssue>();
+
+    public DbSet<MinimumStock> MinimumStocks => Set<MinimumStock>();
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         RefreshNormalizedKeys();
@@ -30,6 +38,11 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<DateTime>().HaveConversion<UtcDateTimeConverter>();
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Explicit registration instead of assembly scanning keeps the model trim-friendly.
@@ -38,6 +51,10 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
         modelBuilder.ApplyConfiguration(new UnitConfiguration());
         modelBuilder.ApplyConfiguration(new ArticleConfiguration());
         modelBuilder.ApplyConfiguration(new AppSettingConfiguration());
+        modelBuilder.ApplyConfiguration(new DeviceConfiguration());
+        modelBuilder.ApplyConfiguration(new MovementConfiguration());
+        modelBuilder.ApplyConfiguration(new BranchIssueConfiguration());
+        modelBuilder.ApplyConfiguration(new MinimumStockConfiguration());
     }
 
     private void RefreshNormalizedKeys()

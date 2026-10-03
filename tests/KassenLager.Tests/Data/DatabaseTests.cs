@@ -58,6 +58,58 @@ public sealed class DatabaseTests : IDisposable
     }
 
     [Fact]
+    public async Task DeviceSerialNumber_IsUniquePerArticleAmongNonVoidedDevices()
+    {
+        var articleId = await AddArticleAsync(TestDatabase.SerialCategoryId);
+        await using (var db = _database.CreateContext())
+        {
+            db.Devices.Add(NewDevice(articleId, "sn-1", isVoided: true));
+            db.Devices.Add(NewDevice(articleId, "SN-1", isVoided: false));
+            await db.SaveChangesAsync();
+        }
+
+        await using var duplicate = _database.CreateContext();
+        duplicate.Devices.Add(NewDevice(articleId, " Sn-1 ", isVoided: false));
+        await Assert.ThrowsAsync<DbUpdateException>(() => duplicate.SaveChangesAsync());
+    }
+
+    [Fact]
+    public async Task Movement_CanBeReversedOnlyOnceAtDatabaseLevel()
+    {
+        var articleId = await AddArticleAsync(TestDatabase.QuantityCategoryId);
+        int originalId;
+        await using (var db = _database.CreateContext())
+        {
+            var original = NewMovement(articleId, MovementType.GoodsReceipt, 1, null);
+            db.Movements.Add(original);
+            await db.SaveChangesAsync();
+            originalId = original.Id;
+            db.Movements.Add(NewMovement(articleId, MovementType.Reversal, -1, originalId));
+            await db.SaveChangesAsync();
+        }
+
+        await using var second = _database.CreateContext();
+        second.Movements.Add(NewMovement(articleId, MovementType.Reversal, -1, originalId));
+        await Assert.ThrowsAsync<DbUpdateException>(() => second.SaveChangesAsync());
+    }
+
+    [Fact]
+    public async Task DateTimes_AreReadBackAsUtc()
+    {
+        var articleId = await AddArticleAsync(TestDatabase.QuantityCategoryId);
+        await using (var db = _database.CreateContext())
+        {
+            db.Movements.Add(NewMovement(articleId, MovementType.GoodsReceipt, 1, null));
+            await db.SaveChangesAsync();
+        }
+
+        await using var check = _database.CreateContext();
+        var movement = await check.Movements.SingleAsync();
+        Assert.Equal(DateTimeKind.Utc, movement.OccurredAt.Kind);
+        Assert.Equal(new DateTime(2026, 10, 3, 10, 0, 0, DateTimeKind.Utc), movement.OccurredAt);
+    }
+
+    [Fact]
     public async Task CategoryWithArticles_CannotBeDeletedAtDatabaseLevel()
     {
         await using (var setup = _database.CreateContext())
@@ -72,4 +124,37 @@ public sealed class DatabaseTests : IDisposable
 
         await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());
     }
+
+    private static readonly DateTime Now = new(2026, 10, 3, 10, 0, 0, DateTimeKind.Utc);
+
+    private async Task<int> AddArticleAsync(int categoryId)
+    {
+        await using var db = _database.CreateContext();
+        var article = new Article { Name = "Test", Model = "M1", CategoryId = categoryId, UnitId = TestDatabase.PieceUnitId };
+        db.Articles.Add(article);
+        await db.SaveChangesAsync();
+        return article.Id;
+    }
+
+    private static Device NewDevice(int articleId, string serialNumber, bool isVoided) => new()
+    {
+        ArticleId = articleId,
+        CustomerId = 1,
+        SerialNumber = serialNumber,
+        State = DeviceState.New,
+        IsVoided = isVoided,
+        CreatedAt = Now,
+        StateChangedAt = Now,
+    };
+
+    private static Movement NewMovement(int articleId, MovementType type, int quantityChange, int? reversalOfId) => new()
+    {
+        Type = type,
+        OccurredAt = Now,
+        RecordedAt = Now,
+        CustomerId = 1,
+        ArticleId = articleId,
+        QuantityChange = quantityChange,
+        ReversalOfId = reversalOfId,
+    };
 }

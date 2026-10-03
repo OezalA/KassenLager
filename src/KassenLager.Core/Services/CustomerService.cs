@@ -57,11 +57,16 @@ public sealed class CustomerService(IAppDbContextFactory dbFactory)
         return customer.Id;
     }
 
-    // Phase 2 adds the "no movement history" guard once movements exist.
+    /// <summary>Only customers without history can be deleted; others are deactivated instead.</summary>
     public async Task DeleteAsync(int id, CancellationToken ct = default)
     {
         await using var db = dbFactory.CreateDbContext();
         var customer = await db.Customers.FirstOrDefaultAsync(c => c.Id == id, ct) ?? throw new EntityNotFoundException();
+        if (await db.Movements.AnyAsync(m => m.CustomerId == id, ct) || await db.Devices.AnyAsync(d => d.CustomerId == id, ct))
+        {
+            throw new BusinessRuleException(Messages.CustomerHasHistory);
+        }
+
         db.Customers.Remove(customer);
         await db.SaveChangesAsync(ct);
     }
