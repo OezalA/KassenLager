@@ -28,6 +28,8 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
 
     DbSet<MinimumStock> MinimumStocks { get; }
 
+    DbSet<ImportLog> ImportLogs { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

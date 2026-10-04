@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Data.DataPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Data"
+    x:DataType="vm:DataViewModel"
+    Title="Import, Export, Sicherung">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="0,0,0,24">
+            <Label Text="Import" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Import}" Text="Excel-Import"
+                              Detail="Artikel, Bestand und Geräte aus Excel übernehmen" Command="{Binding OpenImportCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Template}" Text="Importvorlage teilen"
+                              Detail="Leere Vorlage mit gültigen Kategorien, Kunden und Zuständen" Command="{Binding ShareTemplateCommand}" />
+
+            <Label Text="Export (Excel)" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Export}" Text="Gesamtbestand"
+                              Detail="Ein Blatt je Kunde und alle Geräte im Lager" Command="{Binding ExportStockCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Journal}" Text="Bewegungsjournal"
+                              Detail="Buchungen nach Zeitraum und Kunde"
+                              Command="{Binding OpenExportCommand}" CommandParameter="{x:Static vm:ExportKind.Journal}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.BranchIssues}" Text="Ausgaben-Liste"
+                              Detail="An Filialen ausgegebene Geräte nach Zeitraum und Kunde"
+                              Command="{Binding OpenExportCommand}" CommandParameter="{x:Static vm:ExportKind.BranchIssues}" />
+
+            <Label Text="Datensicherung" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Backup}" Text="Sicherung erstellen und teilen"
+                              Detail="{Binding LastBackupText}" Command="{Binding CreateBackupCommand}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Restore}" Text="Sicherung wiederherstellen"
+                              Detail="Ersetzt alle Daten; vorher wird automatisch gesichert" Command="{Binding RestoreBackupCommand}" />
+            <Label Style="{StaticResource Hint}" Margin="16,12,16,0"
+                   Text="Die Sicherung ist eine einzelne Datei mit allen Daten. Zum Aufbewahren z. B. in Google Drive speichern oder per E-Mail senden." />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPageBase>

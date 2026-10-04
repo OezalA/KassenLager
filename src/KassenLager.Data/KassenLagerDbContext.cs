@@ -26,6 +26,8 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
 
     public DbSet<MinimumStock> MinimumStocks => Set<MinimumStock>();
 
+    public DbSet<ImportLog> ImportLogs => Set<ImportLog>();
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         RefreshNormalizedKeys();
@@ -55,6 +57,7 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
         modelBuilder.ApplyConfiguration(new MovementConfiguration());
         modelBuilder.ApplyConfiguration(new BranchIssueConfiguration());
         modelBuilder.ApplyConfiguration(new MinimumStockConfiguration());
+        modelBuilder.ApplyConfiguration(new ImportLogConfiguration());
     }
 
     private void RefreshNormalizedKeys()

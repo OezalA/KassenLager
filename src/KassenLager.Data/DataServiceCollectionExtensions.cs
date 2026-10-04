@@ -12,6 +12,8 @@ public static class DataServiceCollectionExtensions
             options.UseSqlite($"Data Source={databasePath}"));
         services.AddSingleton<IAppDbContextFactory, AppDbContextFactory>();
         services.AddSingleton<DatabaseInitializer>();
+        services.AddSingleton(new DatabaseLocation(databasePath));
+        services.AddSingleton<DatabaseBackupService>();
         return services;
     }
 }

@@ -32,6 +32,8 @@
 		<!-- EF Core discovers entities, configurations and migrations via reflection. -->
 		<TrimmerRootAssembly Include="KassenLager.Core" />
 		<TrimmerRootAssembly Include="KassenLager.Data" />
+		<!-- MiniExcel reads and writes the workbook parts via reflection-free code, but keep it whole to be safe. -->
+		<TrimmerRootAssembly Include="MiniExcel" />
 	</ItemGroup>
 
 	<ItemGroup>

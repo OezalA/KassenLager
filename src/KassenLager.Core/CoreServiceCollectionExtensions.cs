@@ -24,6 +24,8 @@ public static class CoreServiceCollectionExtensions
         services.AddSingleton<DeviceService>();
         services.AddSingleton<JournalService>();
         services.AddSingleton<SearchService>();
+        services.AddSingleton<ImportService>();
+        services.AddSingleton<ExportService>();
         return services;
     }
 }

@@ -8,6 +8,7 @@ using KassenLager.App.ViewModels.Booking;
 using KassenLager.App.ViewModels.BranchIssues;
 using KassenLager.App.ViewModels.Categories;
 using KassenLager.App.ViewModels.Customers;
+using KassenLager.App.ViewModels.Data;
 using KassenLager.App.ViewModels.Devices;
 using KassenLager.App.ViewModels.Movements;
 using KassenLager.App.ViewModels.Pickers;
@@ -20,6 +21,7 @@ using KassenLager.App.Views.Booking;
 using KassenLager.App.Views.BranchIssues;
 using KassenLager.App.Views.Categories;
 using KassenLager.App.Views.Customers;
+using KassenLager.App.Views.Data;
 using KassenLager.App.Views.Devices;
 using KassenLager.App.Views.Movements;
 using KassenLager.App.Views.Pickers;
@@ -67,6 +69,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDialogService, DialogService>();
         builder.Services.AddSingleton<INavigationService, ShellNavigationService>();
         builder.Services.AddSingleton<IPickerService, PickerService>();
+        builder.Services.AddSingleton<IFileService, FileService>();
         builder.Services.AddSingleton<AppShell>();
 
         builder.Services
@@ -91,6 +94,9 @@ public static class MauiProgram
             .AddPage<BranchIssueDetailPage, BranchIssueDetailViewModel>()
             .AddPage<MovementListPage, MovementListViewModel>()
             .AddPage<MovementDetailPage, MovementDetailViewModel>()
+            .AddPage<DataPage, DataViewModel>()
+            .AddPage<ImportPage, ImportViewModel>()
+            .AddPage<ExportPage, ExportViewModel>()
             .AddPage<GoodsReceiptPage, GoodsReceiptViewModel>()
             .AddPage<ConsumptionPage, ConsumptionViewModel>()
             .AddPage<BranchIssueFormPage, BranchIssueFormViewModel>()

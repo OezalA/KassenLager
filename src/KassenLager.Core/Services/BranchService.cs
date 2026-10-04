@@ -82,7 +82,7 @@ public sealed class BranchService(IAppDbContextFactory dbFactory, TimeProvider c
 {
     private const int SuggestionSourceLimit = 500;
 
-    private static readonly Expression<Func<BranchIssue, BranchIssueListItem>> ToListItem = b => new BranchIssueListItem(
+    internal static readonly Expression<Func<BranchIssue, BranchIssueListItem>> ToListItem = b => new BranchIssueListItem(
         b.Id,
         b.MovementId,
         b.Movement!.OccurredAt,

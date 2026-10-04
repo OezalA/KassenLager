@@ -36,4 +36,10 @@ public static class Icons
     public const string Close = "";           // close
     public const string Edit = "";            // edit
     public const string History = "";         // history
+    public const string Data = "";            // import_export
+    public const string Import = "";          // upload_file
+    public const string Template = "";        // description
+    public const string Export = "";          // table_chart
+    public const string Backup = "";          // backup
+    public const string Restore = "";         // restore
 }

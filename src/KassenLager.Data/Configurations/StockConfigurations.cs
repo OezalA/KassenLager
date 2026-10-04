@@ -110,3 +110,13 @@ internal sealed class MinimumStockConfiguration : IEntityTypeConfiguration<Minim
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+internal sealed class ImportLogConfiguration : IEntityTypeConfiguration<ImportLog>
+{
+    public void Configure(EntityTypeBuilder<ImportLog> builder)
+    {
+        builder.ToTable("ImportLogs");
+        builder.Property(l => l.FileName).IsRequired().HasMaxLength(ImportLog.FileNameMaxLength);
+        builder.HasIndex(l => l.ImportedAt);
+    }
+}

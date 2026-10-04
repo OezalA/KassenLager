@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Data.ImportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Data"
+    x:DataType="vm:ImportViewModel"
+    Title="Excel-Import">
+
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView ItemsSource="{Binding Rows}" SelectionMode="None">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,8,16,8" Spacing="8">
+                    <Label Style="{StaticResource Hint}"
+                           Text="Blätter „Artikel“, „Bestand“ und „Geräte“ wie in der Vorlage. Vor dem Import wird jede Zeile geprüft und angezeigt." />
+                    <Button Text="Excel-Datei wählen" Command="{Binding PickFileCommand}" />
+                    <Button Text="Vorlage teilen" Style="{StaticResource SecondaryButton}" Command="{Binding ShareTemplateCommand}" />
+
+                    <Label Text="Bestand und Geräte" Style="{StaticResource FormLabel}" />
+                    <RadioButton Content="setzen – Excel-Menge wird neuer Bestand" GroupName="importMode" IsChecked="{Binding IsSetMode}" />
+                    <RadioButton Content="addieren – als Wareneingang hinzufügen" GroupName="importMode" IsChecked="{Binding IsAddMode}" />
+
+                    <VerticalStackLayout IsVisible="{Binding HasPreview}" Spacing="4" Margin="0,8,0,0">
+                        <Label Text="{Binding FileName}" FontFamily="OpenSansSemibold" />
+                        <Label Text="{Binding SummaryText}" />
+                        <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                            <Label Text="Nur fehlerhafte Zeilen" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding ErrorsOnly}" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding HasLog}" Margin="0,8,0,0">
+                        <Label Text="Letzte Importe" Style="{StaticResource FormLabel}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Log}" Spacing="6">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="services:ImportLogItem">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding FileName}" FontFamily="OpenSansSemibold" />
+                                        <Label Style="{StaticResource ItemSubtitle}" FontSize="13">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding LocalTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
+                                                    <Span Text=" · " />
+                                                    <Span Text="{Binding ModeName}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Text="{Binding CountsText}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:ImportRowResult">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}" FontSize="16" />
+                                <Label Text="{Binding Location}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                                <Label Text="{Binding Message}" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap"
+                                       IsVisible="{Binding Message, Converter={StaticResource HasText}}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsError}" Value="True">
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </VerticalStackLayout>
+                            <controls:Badge Grid.Column="1" Text="{Binding StatusName}" IsDanger="{Binding IsError}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}" IsVisible="{Binding CanImport}">
+            <Button Text="{Binding ImportButtonText}" Command="{Binding ImportCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

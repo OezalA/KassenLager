@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KassenLager.App.Services;
+using KassenLager.App.ViewModels.Data;
 using KassenLager.Core.Services;
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +12,8 @@ public sealed partial class OverviewViewModel(
     StockService stock,
     JournalService journal,
     SettingsService settings,
+    UserPreferences preferences,
+    TimeProvider clock,
     INavigationService navigation,
     IDialogService dialogs,
     ILogger<OverviewViewModel> logger)
@@ -39,6 +42,12 @@ public sealed partial class OverviewViewModel(
     [ObservableProperty]
     public partial bool HasMovements { get; set; }
 
+    [ObservableProperty]
+    public partial bool ShowBackupReminder { get; set; }
+
+    [ObservableProperty]
+    public partial string? BackupReminderText { get; set; }
+
     public Task LoadAsync() => RunAsync(async () =>
     {
         var userName = await settings.GetUserNameAsync();
@@ -51,6 +60,10 @@ public sealed partial class OverviewViewModel(
 
         RecentMovements = await journal.GetPageAsync(new MovementFilter(), 0, RecentCount);
         HasMovements = RecentMovements.Count > 0;
+
+        var lastBackup = preferences.LastBackupAt;
+        ShowBackupReminder = lastBackup is null || clock.GetUtcNow().UtcDateTime - lastBackup.Value > TimeSpan.FromDays(DataViewModel.BackupReminderDays);
+        BackupReminderText = DataViewModel.DescribeLastBackup(lastBackup, clock);
     });
 
     [RelayCommand]

@@ -28,6 +28,7 @@ public static class Messages
     public const string ArticleRequired = "Bitte einen Artikel auswählen.";
     public const string DeviceRequired = "Bitte ein Gerät auswählen.";
     public const string DateInFuture = "Das Datum darf nicht in der Zukunft liegen.";
+    public const string DateRangeInvalid = "Das Enddatum liegt vor dem Startdatum.";
     public const string QuantityOutOfRange = "Die Menge muss eine ganze Zahl zwischen 1 und {0} sein.";
     public const string ArticleIsSerialTracked = "„{0}“ wird mit Seriennummern geführt. Bitte die Geräte einzeln buchen.";
     public const string ArticleIsQuantityTracked = "„{0}“ wird nur nach Menge geführt und hat keine Seriennummern.";
@@ -53,6 +54,31 @@ public static class Messages
     public const string ReversalNotLatest = "Für dieses Gerät gibt es eine spätere Buchung. Bitte zuerst die spätere Buchung stornieren.";
     public const string ReversalStateMismatch = "Storno nicht möglich: Der Zustand des Geräts passt nicht mehr zu dieser Buchung.";
     public const string ReversalStockNegative = "Storno nicht möglich: Der Bestand von „{0}“ für {1} würde negativ (aktuell {2} {3}).";
+
+    public const string ImportFileUnreadable = "Die Datei konnte nicht gelesen werden. Bitte eine Excel-Datei (.xlsx) wählen.";
+    public const string ImportNoSheets = "Die Datei enthält keines der Blätter „Artikel“, „Bestand“ oder „Geräte“. Am einfachsten die Vorlage verwenden.";
+    public const string ImportMissingColumns = "Im Blatt „{0}“ fehlen die Spalten: {1}.";
+    public const string ImportNotAWholeNumber = "„{0}“ muss eine ganze Zahl sein (Wert „{1}“).";
+    public const string ImportArticleKeyMissing = "Artikelnummer, Hersteller/Modell oder Bezeichnung fehlt.";
+    public const string ImportArticleNotFound = "Kein passender Artikel gefunden ({0}).";
+    public const string ImportArticleAmbiguous = "Mehrere Artikel passen ({0}). Bitte die Artikelnummer angeben.";
+    public const string ImportUnknownCategory = "Unbekannte Kategorie „{0}“.";
+    public const string ImportUnknownUnit = "Unbekannte Einheit „{0}“.";
+    public const string ImportCustomerMissing = "Kunde fehlt.";
+    public const string ImportUnknownCustomer = "Unbekannter Kunde „{0}“.";
+    public const string ImportDuplicateRow = "Doppelt – bereits in Zeile {0}.";
+    public const string ImportSerialArticleInStockSheet = "„{0}“ wird mit Seriennummern geführt – Geräte im Blatt „Geräte“ erfassen.";
+    public const string ImportQuantityArticleInDeviceSheet = "„{0}“ wird nur nach Menge geführt – Bestand im Blatt „Bestand“ erfassen.";
+    public const string ImportNothingToImport = "Bitte Menge oder Mindestbestand angeben.";
+    public const string ImportNegativeQuantity = "Die Menge darf nicht negativ sein.";
+    public const string ImportUnknownState = "Unbekannter Zustand „{0}“.";
+    public const string ImportStateNotAllowed = "Der Zustand „{0}“ kann nicht importiert werden (nur Neu, Gebraucht – funktionsfähig, Defekt).";
+    public const string ImportIssuedNotAllowed = "„Ausgegeben“ kann nicht importiert werden – bitte eine Ausgabe an Filiale buchen.";
+    public const string ImportDeviceIsIssued = "Das Gerät ist an eine Filiale ausgegeben – bitte eine Rücknahme buchen.";
+    public const string ImportCategoryChangeLocked = "Die Kategorie kann nicht in eine mit anderer Erfassungsart geändert werden, weil es zu dem Artikel bereits Buchungen gibt.";
+
+    public const string BackupInvalidFile = "Die Datei ist keine gültige KassenLager-Datensicherung.";
+    public const string BackupFromNewerVersion = "Die Datensicherung stammt aus einer neueren App-Version. Bitte zuerst die App aktualisieren.";
 
     public static string Format(string template, params object?[] args) =>
         string.Format(System.Globalization.CultureInfo.GetCultureInfo("de-DE"), template, args);

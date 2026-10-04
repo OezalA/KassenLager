@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Data.ExportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Data"
+    x:DataType="vm:ExportViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Text="{Binding Description}" Style="{StaticResource Hint}" Margin="0,8,0,0" />
+
+                <Label Text="Von" Style="{StaticResource FormLabel}" />
+                <DatePicker Date="{Binding FromDate}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" />
+
+                <Label Text="Bis" Style="{StaticResource FormLabel}" />
+                <DatePicker Date="{Binding ToDate}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" />
+
+                <Label Text="Kunde" Style="{StaticResource FormLabel}" />
+                <Picker ItemsSource="{Binding CustomerFilters}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                        SelectedItem="{Binding SelectedCustomerFilter}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Excel erstellen und teilen" Command="{Binding ExportCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

@@ -65,6 +65,20 @@
                 </Border>
             </Grid>
 
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowBackupReminder}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Data}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Label Style="{StaticResource Icon}" Text="{x:Static app:Icons.Backup}" />
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Datensicherung empfohlen" FontFamily="OpenSansSemibold" />
+                        <Label Text="{Binding BackupReminderText}" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                </Grid>
+            </Border>
+
             <Border Style="{StaticResource Card}" IsVisible="{Binding IsUserNameMissing}">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />

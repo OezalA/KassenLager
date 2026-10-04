@@ -29,6 +29,11 @@
                               Detail="Modelle, Ersatzteile und Material, Mindestbestand"
                               Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Articles}" />
 
+            <Label Text="Daten" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Data}" Text="Import, Export, Sicherung"
+                              Detail="Excel-Import, Excel-Listen, Datensicherung"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Data}" />
+
             <Label Text="App" Style="{StaticResource SectionHeader}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Settings}" Text="Einstellungen"
                               Detail="Kunden, Kategorien, Einheiten, Benutzername, Darstellung"

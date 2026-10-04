@@ -26,6 +26,9 @@ public static class Routes
     public const string BranchIssueDetail = "branch-issue-detail";
     public const string Movements = "movements";
     public const string MovementDetail = "movement-detail";
+    public const string Data = "data";
+    public const string Import = "import";
+    public const string Export = "export";
 
     // Booking forms
     public const string GoodsReceipt = "goods-receipt";
@@ -49,6 +52,9 @@ public static class Routes
 
     /// <summary>Which device booking the device action form performs (<see cref="ViewModels.Booking.DeviceAction"/>).</summary>
     public const string ActionParameter = "action";
+
+    /// <summary>Which export the export page creates (<see cref="ViewModels.Data.ExportKind"/>).</summary>
+    public const string KindParameter = "kind";
 
     /// <summary>Picker request object.</summary>
     public const string RequestParameter = "request";
