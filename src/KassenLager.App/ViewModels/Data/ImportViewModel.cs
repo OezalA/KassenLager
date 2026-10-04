@@ -137,7 +137,7 @@ public sealed partial class ImportViewModel(
         string? path = null;
         if (await RunAsync(async () => path = await files.CreateExportAsync(exports.FileName("Vorlage"), s => exports.WriteTemplateAsync(s))))
         {
-            await files.ShareAsync(path!, "Importvorlage teilen");
+            await RunAsync(() => files.SaveOrShareAsync(path!, "Importvorlage"));
         }
     }
 

@@ -15,7 +15,7 @@
             <Label Text="Import" Style="{StaticResource SectionHeader}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Import}" Text="Excel-Import"
                               Detail="Artikel, Bestand und Geräte aus Excel übernehmen" Command="{Binding OpenImportCommand}" />
-            <controls:MenuRow Icon="{x:Static app:Icons.Template}" Text="Importvorlage teilen"
+            <controls:MenuRow Icon="{x:Static app:Icons.Template}" Text="Importvorlage"
                               Detail="Leere Vorlage mit gültigen Kategorien, Kunden und Zuständen" Command="{Binding ShareTemplateCommand}" />
 
             <Label Text="Export (Excel)" Style="{StaticResource SectionHeader}" />
@@ -29,12 +29,12 @@
                               Command="{Binding OpenExportCommand}" CommandParameter="{x:Static vm:ExportKind.BranchIssues}" />
 
             <Label Text="Datensicherung" Style="{StaticResource SectionHeader}" />
-            <controls:MenuRow Icon="{x:Static app:Icons.Backup}" Text="Sicherung erstellen und teilen"
+            <controls:MenuRow Icon="{x:Static app:Icons.Backup}" Text="Sicherung erstellen"
                               Detail="{Binding LastBackupText}" Command="{Binding CreateBackupCommand}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Restore}" Text="Sicherung wiederherstellen"
                               Detail="Ersetzt alle Daten; vorher wird automatisch gesichert" Command="{Binding RestoreBackupCommand}" />
             <Label Style="{StaticResource Hint}" Margin="16,12,16,0"
-                   Text="Die Sicherung ist eine einzelne Datei mit allen Daten. Zum Aufbewahren z. B. in Google Drive speichern oder per E-Mail senden." />
+                   Text="Die Sicherung ist eine einzelne Datei mit allen Daten. Auf dem Gerät (z. B. im Ordner Download) speichern oder zusätzlich in Google Drive bzw. per E-Mail aufbewahren." />
         </VerticalStackLayout>
     </ScrollView>
 </views:ContentPageBase>

@@ -76,7 +76,7 @@ public sealed partial class ExportViewModel(
 
         if (created)
         {
-            await files.ShareAsync(path!, $"{Title} teilen");
+            await RunAsync(() => files.SaveOrShareAsync(path!, Title ?? "Export"));
         }
     }
 }

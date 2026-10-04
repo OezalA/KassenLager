@@ -28,7 +28,7 @@
         </ScrollView>
 
         <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
-            <Button Text="Excel erstellen und teilen" Command="{Binding ExportCommand}" />
+            <Button Text="Excel erstellen" Command="{Binding ExportCommand}" />
         </VerticalStackLayout>
     </Grid>
 </views:ContentPageBase>

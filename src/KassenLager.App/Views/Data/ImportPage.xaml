@@ -17,7 +17,7 @@
                     <Label Style="{StaticResource Hint}"
                            Text="Blätter „Artikel“, „Bestand“ und „Geräte“ wie in der Vorlage. Vor dem Import wird jede Zeile geprüft und angezeigt." />
                     <Button Text="Excel-Datei wählen" Command="{Binding PickFileCommand}" />
-                    <Button Text="Vorlage teilen" Style="{StaticResource SecondaryButton}" Command="{Binding ShareTemplateCommand}" />
+                    <Button Text="Vorlage speichern oder teilen" Style="{StaticResource SecondaryButton}" Command="{Binding ShareTemplateCommand}" />
 
                     <Label Text="Bestand und Geräte" Style="{StaticResource FormLabel}" />
                     <RadioButton Content="setzen – Excel-Menge wird neuer Bestand" GroupName="importMode" IsChecked="{Binding IsSetMode}" />

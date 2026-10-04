@@ -63,10 +63,10 @@ public sealed partial class DataViewModel(
         navigation.GoToAsync(Routes.Export, new Dictionary<string, object> { [Routes.KindParameter] = kind });
 
     [RelayCommand]
-    private Task ShareTemplateAsync() => ShareExcelAsync("Vorlage", "Importvorlage teilen", exports.WriteTemplateAsync);
+    private Task ShareTemplateAsync() => ShareExcelAsync("Vorlage", "Importvorlage", exports.WriteTemplateAsync);
 
     [RelayCommand]
-    private Task ExportStockAsync() => ShareExcelAsync("Gesamtbestand", "Gesamtbestand teilen", exports.WriteStockAsync);
+    private Task ExportStockAsync() => ShareExcelAsync("Gesamtbestand", "Gesamtbestand", exports.WriteStockAsync);
 
     [RelayCommand]
     private async Task CreateBackupAsync()
@@ -81,9 +81,13 @@ public sealed partial class DataViewModel(
             return;
         }
 
-        preferences.LastBackupAt = clock.GetUtcNow().UtcDateTime;
-        await LoadAsync();
-        await files.ShareAsync(path!, "Datensicherung speichern");
+        // Only a backup that left the app counts for the reminder.
+        var delivered = false;
+        if (await RunAsync(async () => delivered = await files.SaveOrShareAsync(path!, "Datensicherung")) && delivered)
+        {
+            preferences.LastBackupAt = clock.GetUtcNow().UtcDateTime;
+            await LoadAsync();
+        }
     }
 
     [RelayCommand]
@@ -126,7 +130,7 @@ public sealed partial class DataViewModel(
         string? path = null;
         if (await RunAsync(async () => path = await files.CreateExportAsync(exports.FileName(prefix), stream => write(stream, default))))
         {
-            await files.ShareAsync(path!, title);
+            await RunAsync(() => files.SaveOrShareAsync(path!, title));
         }
     }
 }
