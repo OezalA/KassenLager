@@ -158,6 +158,77 @@ internal static class Ledger
         return movement;
     }
 
+    /// <summary>Trims the serial numbers, drops empty ones and rejects duplicates (case-insensitive).</summary>
+    public static List<string> CleanSerialNumbers(IEnumerable<string> serialNumbers, bool required = true)
+    {
+        var cleaned = serialNumbers
+            .Select(s => InputGuard.Optional(s, "Seriennummer", Device.SerialNumberMaxLength))
+            .OfType<string>()
+            .ToList();
+        if (required && cleaned.Count == 0)
+        {
+            throw new BusinessRuleException(Messages.SerialNumbersRequired);
+        }
+
+        var duplicate = cleaned.GroupBy(TextKey.From).FirstOrDefault(g => g.Count() > 1);
+        if (duplicate is not null)
+        {
+            throw new BusinessRuleException(Messages.Format(Messages.SerialNumberEnteredTwice, duplicate.First()));
+        }
+
+        return cleaned;
+    }
+
+    /// <summary>
+    /// Goods receipt of serial numbers of one article, one movement per device. A serial number
+    /// already known for the article is booked in again if the device is out of the store
+    /// (e.g. back from repair) and belongs to the same customer; one in the store is an error.
+    /// </summary>
+    public static async Task<List<Movement>> ReceiveSerialNumbersAsync(
+        IAppDbContext db,
+        Article article,
+        Customer customer,
+        IReadOnlyList<string> serialNumbers,
+        DeviceState state,
+        BookingTime time,
+        string? reference,
+        string? note,
+        CancellationToken ct)
+    {
+        if (!state.IsInStore())
+        {
+            throw new BusinessRuleException(Messages.Format(Messages.StateNotAllowed, Labels.Of(state)));
+        }
+
+        var keys = serialNumbers.Select(s => TextKey.From(s)!).ToList();
+        var existing = await db.Devices
+            .Include(d => d.Customer)
+            .Where(d => d.ArticleId == article.Id && !d.IsVoided && keys.Contains(d.SerialNumberKey))
+            .ToDictionaryAsync(d => d.SerialNumberKey, ct);
+
+        var movements = new List<Movement>();
+        foreach (var serialNumber in serialNumbers)
+        {
+            if (existing.TryGetValue(TextKey.From(serialNumber)!, out var device))
+            {
+                if (device.State.IsInStore())
+                {
+                    throw new BusinessRuleException(Messages.Format(
+                        Messages.DeviceAlreadyInStock, device.SerialNumber, device.Customer!.Name, Labels.Of(device.State)));
+                }
+
+                EnsureBookable(device, customer);
+                movements.Add(AddDeviceMovement(db, device, MovementType.GoodsReceipt, device.State, state, time, null, reference, note));
+            }
+            else
+            {
+                movements.Add(AddNewDevice(db, article, customer, serialNumber, state, MovementType.GoodsReceipt, time, null, reference, note));
+            }
+        }
+
+        return movements;
+    }
+
     /// <summary>Creates a device and the movement that brings it into the system.</summary>
     public static Movement AddNewDevice(
         IAppDbContext db,

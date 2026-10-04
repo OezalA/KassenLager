@@ -26,6 +26,7 @@ public static class CoreServiceCollectionExtensions
         services.AddSingleton<SearchService>();
         services.AddSingleton<ImportService>();
         services.AddSingleton<ExportService>();
+        services.AddSingleton<OrderService>();
         return services;
     }
 }

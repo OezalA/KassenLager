@@ -21,8 +21,8 @@ public static class Messages
     public const string ArticleUnitRequired = "Bitte eine Einheit auswählen.";
     public const string ArticleModelRequired = "Für Artikel mit Seriennummernerfassung ist das Modell ein Pflichtfeld.";
     public const string ArticleNumberExists = "Die Artikelnummer „{0}“ ist bereits dem Artikel „{1}“ zugeordnet.";
-    public const string ArticleHasHistory = "Der Artikel kann nicht gelöscht werden, weil es bereits Buchungen oder Geräte dazu gibt. Er kann stattdessen deaktiviert werden.";
-    public const string CustomerHasHistory = "Der Kunde kann nicht gelöscht werden, weil es bereits Buchungen oder Geräte für ihn gibt. Er kann stattdessen deaktiviert werden.";
+    public const string ArticleHasHistory = "Der Artikel kann nicht gelöscht werden, weil es bereits Buchungen, Geräte oder Bestellungen dazu gibt. Er kann stattdessen deaktiviert werden.";
+    public const string CustomerHasHistory = "Der Kunde kann nicht gelöscht werden, weil es bereits Buchungen, Geräte oder Bestellungen für ihn gibt. Er kann stattdessen deaktiviert werden.";
 
     public const string CustomerRequired = "Bitte einen Kunden auswählen.";
     public const string ArticleRequired = "Bitte einen Artikel auswählen.";
@@ -76,6 +76,18 @@ public static class Messages
     public const string ImportIssuedNotAllowed = "„Ausgegeben“ kann nicht importiert werden – bitte eine Ausgabe an Filiale buchen.";
     public const string ImportDeviceIsIssued = "Das Gerät ist an eine Filiale ausgegeben – bitte eine Rücknahme buchen.";
     public const string ImportCategoryChangeLocked = "Die Kategorie kann nicht in eine mit anderer Erfassungsart geändert werden, weil es zu dem Artikel bereits Buchungen gibt.";
+
+    public const string OrderNotDraft = "Positionen können nur im Entwurf geändert werden.";
+    public const string OrderHasNoLines = "Die Bestellung enthält keine Positionen.";
+    public const string OrderNotReceivable = "Ein Wareneingang ist nur für bestellte, noch nicht vollständig gelieferte Bestellungen möglich.";
+    public const string OrderReceiptEmpty = "Bitte bei mindestens einer Position eine Menge oder Seriennummer erfassen.";
+    public const string OrderReceiptTooMuch = "Für „{0}“ sind nur noch {1} {2} offen. Eine Mehrlieferung bitte als normalen Wareneingang buchen.";
+    public const string OrderLineUnknown = "Die Position gehört nicht zu dieser Bestellung.";
+    public const string OrderCannotCancel = "Nur Bestellungen ohne Wareneingang können storniert werden. Teilweise gelieferte Bestellungen bitte abschließen.";
+    public const string OrderCannotClose = "Nur teilweise gelieferte Bestellungen können abgeschlossen werden.";
+    public const string OrderCannotDelete = "Nur Entwürfe können gelöscht werden.";
+    public const string OrderCannotPlace = "Nur Entwürfe können bestellt werden.";
+    public const string OrderClosedForChanges = "Stornierte Bestellungen können nicht mehr geändert werden.";
 
     public const string BackupInvalidFile = "Die Datei ist keine gültige KassenLager-Datensicherung.";
     public const string BackupFromNewerVersion = "Die Datensicherung stammt aus einer neueren App-Version. Bitte zuerst die App aktualisieren.";

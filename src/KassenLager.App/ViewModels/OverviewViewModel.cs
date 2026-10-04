@@ -11,6 +11,7 @@ namespace KassenLager.App.ViewModels;
 public sealed partial class OverviewViewModel(
     StockService stock,
     JournalService journal,
+    OrderService orders,
     SettingsService settings,
     UserPreferences preferences,
     TimeProvider clock,
@@ -37,6 +38,9 @@ public sealed partial class OverviewViewModel(
     public partial int BelowMinimumCount { get; set; }
 
     [ObservableProperty]
+    public partial int OpenOrderCount { get; set; }
+
+    [ObservableProperty]
     public partial IReadOnlyList<MovementListItem>? RecentMovements { get; set; }
 
     [ObservableProperty]
@@ -57,6 +61,7 @@ public sealed partial class OverviewViewModel(
         Customers = await stock.GetCustomerSummariesAsync();
         DefectiveCount = Customers.Sum(c => c.DefectiveDevices);
         BelowMinimumCount = Customers.Sum(c => c.BelowMinimum);
+        OpenOrderCount = await orders.GetOpenCountAsync();
 
         RecentMovements = await journal.GetPageAsync(new MovementFilter(), 0, RecentCount);
         HasMovements = RecentMovements.Count > 0;

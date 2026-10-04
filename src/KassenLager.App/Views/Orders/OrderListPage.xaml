@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Orders.OrderListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:shared="clr-namespace:KassenLager.App.ViewModels"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Orders"
+    x:DataType="vm:OrderListViewModel"
+    Title="Bestellungen">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <VerticalStackLayout Padding="16,0,8,0">
+            <Picker Title="Kunde" ItemsSource="{Binding CustomerFilters}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=shared:CustomerFilter}"
+                    SelectedItem="{Binding SelectedCustomerFilter}" />
+            <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                <Label Text="Nur offene Bestellungen" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding OpenOnly}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="Keine Bestellungen. Am einfachsten mit dem Bestellvorschlag beginnen."
+                       Style="{StaticResource Hint}" HorizontalTextAlignment="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:OrderListItem">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:OrderListViewModel}}, x:DataType=vm:OrderListViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding CustomerName}" Style="{StaticResource ItemSubtitle}" />
+                                <Label Text="{Binding ProgressText}" Style="{StaticResource ItemSubtitle}" FontSize="13" />
+                                <Label Text="{Binding Reference, StringFormat='Nr. {0}'}" Style="{StaticResource ItemSubtitle}" FontSize="13"
+                                       IsVisible="{Binding Reference, Converter={StaticResource HasText}}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding CreatedLocalTime, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource Hint}" HorizontalOptions="End" />
+                                <controls:Badge Text="{Binding StatusName}" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Style="{StaticResource Chevron}" Text="{x:Static app:Icons.ChevronRight}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="2" Style="{StaticResource BottomBar}">
+            <Button Text="Bestellvorschlag" Command="{Binding OpenSuggestionCommand}" />
+            <Button Text="Leere Bestellung anlegen" Style="{StaticResource SecondaryButton}" Command="{Binding NewOrderCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

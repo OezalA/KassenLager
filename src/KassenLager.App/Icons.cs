@@ -42,4 +42,6 @@ public static class Icons
     public const string Export = "";          // table_chart
     public const string Backup = "";          // backup
     public const string Restore = "";         // restore
+    public const string Orders = "";          // shopping_cart
+    public const string OrderSuggestion = ""; // add_shopping_cart
 }

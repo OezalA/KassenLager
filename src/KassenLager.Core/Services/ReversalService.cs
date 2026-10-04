@@ -63,7 +63,17 @@ public sealed class ReversalService(IAppDbContextFactory dbFactory, TimeProvider
 
         reversal.ReversalOfId = movement.Id;
 
+        // A reversed goods receipt of an order counts against the same order line.
+        reversal.OrderLineId = movement.OrderLineId;
+
         await db.SaveChangesAsync(ct);
+        if (movement.OrderLineId is { } orderLineId)
+        {
+            var orderId = await db.OrderLines.Where(l => l.Id == orderLineId).Select(l => l.OrderId).FirstAsync(ct);
+            await OrderRules.RefreshStatusAsync(db, orderId, ct);
+            await db.SaveChangesAsync(ct);
+        }
+
         await transaction.CommitAsync(ct);
         return reversal.Id;
     }

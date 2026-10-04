@@ -39,6 +39,16 @@ public static class Labels
         _ => kind.ToString(),
     };
 
+    public static string Of(OrderStatus status) => status switch
+    {
+        OrderStatus.Draft => "Entwurf",
+        OrderStatus.Ordered => "Bestellt",
+        OrderStatus.PartiallyDelivered => "Teilweise geliefert",
+        OrderStatus.Delivered => "Geliefert",
+        OrderStatus.Cancelled => "Storniert",
+        _ => status.ToString(),
+    };
+
     /// <summary>"Hersteller Modell", skipping empty parts.</summary>
     public static string ManufacturerAndModel(string? manufacturer, string? model) =>
         string.Join(" ", new[] { manufacturer, model }.Where(s => !string.IsNullOrWhiteSpace(s)));

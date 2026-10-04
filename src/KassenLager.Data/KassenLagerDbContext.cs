@@ -28,6 +28,10 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
 
     public DbSet<ImportLog> ImportLogs => Set<ImportLog>();
 
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderLine> OrderLines => Set<OrderLine>();
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         RefreshNormalizedKeys();
@@ -58,6 +62,8 @@ public sealed class KassenLagerDbContext(DbContextOptions<KassenLagerDbContext> 
         modelBuilder.ApplyConfiguration(new BranchIssueConfiguration());
         modelBuilder.ApplyConfiguration(new MinimumStockConfiguration());
         modelBuilder.ApplyConfiguration(new ImportLogConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderLineConfiguration());
     }
 
     private void RefreshNormalizedKeys()

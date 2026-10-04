@@ -24,6 +24,14 @@
                               Detail="Alle Buchungen, Storno"
                               Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Movements}" />
 
+            <Label Text="Bestellung" Style="{StaticResource SectionHeader}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.OrderSuggestion}" Text="Bestellvorschlag"
+                              Detail="Artikel unter Mindestbestand je Kunde"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.OrderSuggestion}" />
+            <controls:MenuRow Icon="{x:Static app:Icons.Orders}" Text="Bestellungen"
+                              Detail="Bestellungen an die Zentrale, Wareneingang aus Bestellung"
+                              Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Orders}" />
+
             <Label Text="Stammdaten" Style="{StaticResource SectionHeader}" />
             <controls:MenuRow Icon="{x:Static app:Icons.Article}" Text="Artikel"
                               Detail="Modelle, Ersatzteile und Material, Mindestbestand"

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Orders.OrderReceiptPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:booking="clr-namespace:KassenLager.App.ViewModels.Booking"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Orders"
+    x:DataType="vm:OrderReceiptViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,4,16,16">
+                <Label Style="{StaticResource Hint}" Margin="0,8,0,0"
+                       Text="Gelieferte Menge je Position eintragen (Teillieferung möglich). Geräte mit ihren Seriennummern erfassen." />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Lines}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ReceiptLineViewModel">
+                            <VerticalStackLayout Padding="0,12,0,8" Spacing="4">
+                                <Label Text="{Binding Line.ArticleName}" Style="{StaticResource ItemTitle}" FontSize="16" />
+                                <Label Text="{Binding Line.ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}"
+                                       IsVisible="{Binding Line.ManufacturerAndModel, Converter={StaticResource HasText}}" />
+                                <Label Text="{Binding OpenText}" Style="{StaticResource Hint}" />
+
+                                <Grid ColumnDefinitions="*,120" IsVisible="{Binding Line.IsSerial, Converter={StaticResource InvertedBool}}">
+                                    <Label Text="Geliefert" VerticalOptions="Center" />
+                                    <Entry Grid.Column="1" Text="{Binding QuantityText}" Keyboard="Numeric" HorizontalTextAlignment="End" />
+                                </Grid>
+
+                                <VerticalStackLayout IsVisible="{Binding Line.IsSerial}" Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Entry Text="{Binding SerialInput}" MaxLength="{Binding SerialNumberMaxLength}" Placeholder="Seriennummer"
+                                               ReturnType="Next" ReturnCommand="{Binding AddSerialCommand}" />
+                                        <Button Grid.Column="1" Text="Hinzufügen" Command="{Binding AddSerialCommand}" />
+                                    </Grid>
+                                    <Label Text="{Binding CountText}" Style="{StaticResource Hint}" />
+                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding SerialNumbers}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="x:String">
+                                                <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="44">
+                                                    <Label Text="{Binding .}" FontFamily="OpenSansSemibold" VerticalOptions="Center" />
+                                                    <Label Grid.Column="1" Style="{StaticResource Icon}" Text="{x:Static app:Icons.Close}" Padding="14,8">
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer
+                                                                Command="{Binding RemoveSerialCommand, Source={RelativeSource AncestorType={x:Type vm:ReceiptLineViewModel}}, x:DataType=vm:ReceiptLineViewModel}"
+                                                                CommandParameter="{Binding .}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                                <BoxView Style="{StaticResource Divider}" Margin="0,8,0,0" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding HasSerialLines}">
+                    <Label Text="Zustand der Geräte" Style="{StaticResource FormLabel}" />
+                    <Picker ItemsSource="{Binding StateChoices}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=booking:StateChoice}"
+                            SelectedItem="{Binding SelectedState}" />
+                </VerticalStackLayout>
+
+                <Label Text="Datum" Style="{StaticResource FormLabel}" />
+                <DatePicker Date="{Binding Date}" MaximumDate="{Binding MaximumDate}" Format="dd.MM.yyyy" />
+
+                <Label Text="Notiz (z. B. Lieferscheinnummer)" Style="{StaticResource FormLabel}" />
+                <Editor Text="{Binding Note}" MaxLength="{Binding NoteMaxLength}" AutoSize="TextChanges" MinimumHeightRequest="80" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Wareneingang buchen" Command="{Binding BookCommand}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

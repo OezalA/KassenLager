@@ -6,6 +6,7 @@ using KassenLager.App.Views.Customers;
 using KassenLager.App.Views.Data;
 using KassenLager.App.Views.Devices;
 using KassenLager.App.Views.Movements;
+using KassenLager.App.Views.Orders;
 using KassenLager.App.Views.Pickers;
 using KassenLager.App.Views.Settings;
 using KassenLager.App.Views.Stock;
@@ -39,6 +40,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(Routes.Data, typeof(DataPage));
         Routing.RegisterRoute(Routes.Import, typeof(ImportPage));
         Routing.RegisterRoute(Routes.Export, typeof(ExportPage));
+        Routing.RegisterRoute(Routes.Orders, typeof(OrderListPage));
+        Routing.RegisterRoute(Routes.OrderDetail, typeof(OrderDetailPage));
+        Routing.RegisterRoute(Routes.OrderSuggestion, typeof(OrderSuggestionPage));
+        Routing.RegisterRoute(Routes.OrderReceipt, typeof(OrderReceiptPage));
 
         Routing.RegisterRoute(Routes.GoodsReceipt, typeof(GoodsReceiptPage));
         Routing.RegisterRoute(Routes.Consumption, typeof(ConsumptionPage));

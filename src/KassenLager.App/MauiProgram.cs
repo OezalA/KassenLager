@@ -11,6 +11,7 @@ using KassenLager.App.ViewModels.Customers;
 using KassenLager.App.ViewModels.Data;
 using KassenLager.App.ViewModels.Devices;
 using KassenLager.App.ViewModels.Movements;
+using KassenLager.App.ViewModels.Orders;
 using KassenLager.App.ViewModels.Pickers;
 using KassenLager.App.ViewModels.Settings;
 using KassenLager.App.ViewModels.Stock;
@@ -24,6 +25,7 @@ using KassenLager.App.Views.Customers;
 using KassenLager.App.Views.Data;
 using KassenLager.App.Views.Devices;
 using KassenLager.App.Views.Movements;
+using KassenLager.App.Views.Orders;
 using KassenLager.App.Views.Pickers;
 using KassenLager.App.Views.Settings;
 using KassenLager.App.Views.Stock;
@@ -97,6 +99,10 @@ public static class MauiProgram
             .AddPage<DataPage, DataViewModel>()
             .AddPage<ImportPage, ImportViewModel>()
             .AddPage<ExportPage, ExportViewModel>()
+            .AddPage<OrderListPage, OrderListViewModel>()
+            .AddPage<OrderSuggestionPage, OrderSuggestionViewModel>()
+            .AddPage<OrderDetailPage, OrderDetailViewModel>()
+            .AddPage<OrderReceiptPage, OrderReceiptViewModel>()
             .AddPage<GoodsReceiptPage, GoodsReceiptViewModel>()
             .AddPage<ConsumptionPage, ConsumptionViewModel>()
             .AddPage<BranchIssueFormPage, BranchIssueFormViewModel>()

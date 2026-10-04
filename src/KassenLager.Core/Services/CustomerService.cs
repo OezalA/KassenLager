@@ -62,7 +62,8 @@ public sealed class CustomerService(IAppDbContextFactory dbFactory)
     {
         await using var db = dbFactory.CreateDbContext();
         var customer = await db.Customers.FirstOrDefaultAsync(c => c.Id == id, ct) ?? throw new EntityNotFoundException();
-        if (await db.Movements.AnyAsync(m => m.CustomerId == id, ct) || await db.Devices.AnyAsync(d => d.CustomerId == id, ct))
+        if (await db.Movements.AnyAsync(m => m.CustomerId == id, ct) || await db.Devices.AnyAsync(d => d.CustomerId == id, ct)
+            || await db.Orders.AnyAsync(o => o.CustomerId == id, ct))
         {
             throw new BusinessRuleException(Messages.CustomerHasHistory);
         }

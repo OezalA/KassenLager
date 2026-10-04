@@ -29,6 +29,10 @@ public static class Routes
     public const string Data = "data";
     public const string Import = "import";
     public const string Export = "export";
+    public const string Orders = "orders";
+    public const string OrderDetail = "order-detail";
+    public const string OrderSuggestion = "order-suggestion";
+    public const string OrderReceipt = "order-receipt";
 
     // Booking forms
     public const string GoodsReceipt = "goods-receipt";

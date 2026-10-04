@@ -90,17 +90,29 @@
                 </Grid>
             </Border>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                <Border Style="{StaticResource Card}">
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Border Style="{StaticResource Card}" Padding="12">
                     <VerticalStackLayout>
                         <Label Text="{Binding DefectiveCount}" Style="{StaticResource StatValue}" />
-                        <Label Text="defekte Geräte im Lager" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap" />
+                        <Label Text="defekte Geräte im Lager" Style="{StaticResource ItemSubtitle}" FontSize="13" LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
-                <Border Grid.Column="1" Style="{StaticResource Card}">
+                <Border Grid.Column="1" Style="{StaticResource Card}" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.OrderSuggestion}" />
+                    </Border.GestureRecognizers>
                     <VerticalStackLayout>
                         <Label Text="{Binding BelowMinimumCount}" Style="{StaticResource StatValue}" />
-                        <Label Text="Artikel unter Mindestbestand" Style="{StaticResource ItemSubtitle}" LineBreakMode="WordWrap" />
+                        <Label Text="unter Mindestbestand" Style="{StaticResource ItemSubtitle}" FontSize="13" LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenRouteCommand}" CommandParameter="{x:Static app:Routes.Orders}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout>
+                        <Label Text="{Binding OpenOrderCount}" Style="{StaticResource StatValue}" />
+                        <Label Text="offene Bestellungen" Style="{StaticResource ItemSubtitle}" FontSize="13" LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

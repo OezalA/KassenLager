@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPageBase
+    x:Class="KassenLager.App.Views.Orders.OrderDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:KassenLager.App"
+    xmlns:controls="clr-namespace:KassenLager.App.Controls"
+    xmlns:services="clr-namespace:KassenLager.Core.Services;assembly=KassenLager.Core"
+    xmlns:views="clr-namespace:KassenLager.App.Views"
+    xmlns:vm="clr-namespace:KassenLager.App.ViewModels.Orders"
+    x:DataType="vm:OrderDetailViewModel"
+    Title="{Binding Detail.Order.Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView ItemsSource="{Binding Detail.Lines}" SelectionMode="None">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,8,16,0" Spacing="4">
+                    <Label Text="{Binding Detail.Order.CustomerName}" FontSize="22" FontFamily="OpenSansSemibold" />
+                    <controls:Badge Text="{Binding Detail.Order.StatusName}" />
+                    <controls:FieldRow Caption="Angelegt am" Value="{Binding Detail.Order.CreatedLocalTime, StringFormat='{0:dd.MM.yyyy}'}" />
+                    <controls:FieldRow Caption="Bestellt am" Value="{Binding Detail.Order.OrderedLocalTime, StringFormat='{0:dd.MM.yyyy}'}" />
+
+                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48" Margin="0,4,0,0">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditReferenceCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Bestellnummer der Zentrale" Style="{StaticResource FormLabel}" Margin="0" />
+                            <Label Text="{Binding Detail.Order.Reference}" IsVisible="{Binding HasReference}" />
+                            <Label Text="Tippen zum Erfassen" Style="{StaticResource Hint}" IsVisible="{Binding HasReference, Converter={StaticResource InvertedBool}}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Icon}" Text="{x:Static app:Icons.Edit}" FontSize="22" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditNoteCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Notiz" Style="{StaticResource FormLabel}" Margin="0" />
+                            <Label Text="{Binding Detail.Note}" IsVisible="{Binding HasNote}" />
+                            <Label Text="Tippen zum Erfassen" Style="{StaticResource Hint}" IsVisible="{Binding HasNote, Converter={StaticResource InvertedBool}}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Style="{StaticResource Icon}" Text="{x:Static app:Icons.Edit}" FontSize="22" />
+                    </Grid>
+
+                    <Label Text="Positionen" Style="{StaticResource SectionHeader}" Margin="0,12,0,0" />
+                    <Label Text="Tippen, um Menge oder Notiz zu ändern." Style="{StaticResource Hint}" IsVisible="{Binding Detail.IsDraft}" />
+                    <Button Text="Artikel hinzufügen" Style="{StaticResource SecondaryButton}" Command="{Binding AddLineCommand}"
+                            IsVisible="{Binding Detail.IsDraft}" Margin="0,4,0,8" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Noch keine Positionen." Style="{StaticResource Hint}" HorizontalOptions="Center" Margin="24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:OrderLineItem">
+                    <VerticalStackLayout>
+                        <Grid Style="{StaticResource ListRow}" ColumnDefinitions="*,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding EditLineCommand, Source={RelativeSource AncestorType={x:Type vm:OrderDetailViewModel}}, x:DataType=vm:OrderDetailViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding ArticleName}" Style="{StaticResource ItemTitle}" FontSize="16" />
+                                <Label Text="{Binding ManufacturerAndModel}" Style="{StaticResource ItemSubtitle}"
+                                       IsVisible="{Binding ManufacturerAndModel, Converter={StaticResource HasText}}" />
+                                <Label Text="{Binding ArticleNumber, StringFormat='Nr. {0}'}" Style="{StaticResource ItemSubtitle}" FontSize="13"
+                                       IsVisible="{Binding ArticleNumber, Converter={StaticResource HasText}}" />
+                                <Label Text="{Binding Note}" Style="{StaticResource ItemSubtitle}" FontSize="13"
+                                       IsVisible="{Binding Note, Converter={StaticResource HasText}}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding QuantityText}" FontFamily="OpenSansSemibold" HorizontalOptions="End" />
+                                <Label Text="{Binding ProgressText}" Style="{StaticResource Hint}" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="1" Style="{StaticResource BottomBar}">
+            <Button Text="Bestellen" Command="{Binding PlaceCommand}" IsVisible="{Binding Detail.CanPlace}" />
+            <Button Text="Wareneingang buchen" Command="{Binding ReceiveCommand}" IsVisible="{Binding Detail.CanReceive}" />
+            <Button Text="Excel speichern oder teilen" Style="{StaticResource SecondaryButton}" Command="{Binding ShareExcelCommand}" />
+            <Button Text="Bestellung abschließen" Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}" IsVisible="{Binding Detail.CanClose}" />
+            <Button Text="Stornieren" Style="{StaticResource DangerButton}" Command="{Binding CancelCommand}" IsVisible="{Binding Detail.CanCancel}" />
+            <Button Text="Entwurf löschen" Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}" IsVisible="{Binding Detail.CanDelete}" />
+        </VerticalStackLayout>
+    </Grid>
+</views:ContentPageBase>

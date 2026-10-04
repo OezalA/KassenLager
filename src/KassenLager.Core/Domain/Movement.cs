@@ -60,6 +60,11 @@ public class Movement
     /// <summary>The reversal that cancelled this movement, if any.</summary>
     public Movement? ReversedBy { get; set; }
 
+    /// <summary>The order line a goods receipt (or its reversal) belongs to.</summary>
+    public int? OrderLineId { get; set; }
+
+    public OrderLine? OrderLine { get; set; }
+
     /// <summary>Details of an issue to a branch (only for <see cref="MovementType.BranchIssue"/>).</summary>
     public BranchIssue? BranchIssue { get; set; }
 }

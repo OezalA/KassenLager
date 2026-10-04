@@ -30,6 +30,10 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
 
     DbSet<ImportLog> ImportLogs { get; }
 
+    DbSet<Order> Orders { get; }
+
+    DbSet<OrderLine> OrderLines { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

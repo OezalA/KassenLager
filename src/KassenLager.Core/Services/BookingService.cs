@@ -78,21 +78,7 @@ public sealed class BookingService(IAppDbContextFactory dbFactory, TimeProvider 
             throw new BusinessRuleException(Messages.Format(Messages.StateNotAllowed, Labels.Of(input.State)));
         }
 
-        var serialNumbers = input.SerialNumbers
-            .Select(s => InputGuard.Optional(s, "Seriennummer", Device.SerialNumberMaxLength))
-            .OfType<string>()
-            .ToList();
-        if (serialNumbers.Count == 0)
-        {
-            throw new BusinessRuleException(Messages.SerialNumbersRequired);
-        }
-
-        var duplicate = serialNumbers.GroupBy(TextKey.From).FirstOrDefault(g => g.Count() > 1);
-        if (duplicate is not null)
-        {
-            throw new BusinessRuleException(Messages.Format(Messages.SerialNumberEnteredTwice, duplicate.First()));
-        }
-
+        var serialNumbers = Ledger.CleanSerialNumbers(input.SerialNumbers);
         var reference = InputGuard.Optional(input.Reference, "Referenz", Movement.ReferenceMaxLength);
         var note = InputGuard.Optional(input.Note, "Notiz", Movement.NoteMaxLength);
         var time = Ledger.ResolveTime(clock, input.Date);
@@ -103,38 +89,11 @@ public sealed class BookingService(IAppDbContextFactory dbFactory, TimeProvider 
         var customer = await Ledger.LoadCustomerAsync(db, input.CustomerId, ct);
         var article = await Ledger.LoadArticleAsync(db, input.ArticleId, TrackingType.Serial, ct);
 
-        var keys = serialNumbers.Select(s => TextKey.From(s)!).ToList();
-        var existing = await db.Devices
-            .Include(d => d.Customer)
-            .Where(d => d.ArticleId == article.Id && !d.IsVoided && keys.Contains(d.SerialNumberKey))
-            .ToDictionaryAsync(d => d.SerialNumberKey, ct);
-
-        var devices = new List<Device>();
-        foreach (var serialNumber in serialNumbers)
-        {
-            if (existing.TryGetValue(TextKey.From(serialNumber)!, out var device))
-            {
-                if (device.State.IsInStore())
-                {
-                    throw new BusinessRuleException(Messages.Format(
-                        Messages.DeviceAlreadyInStock, device.SerialNumber, device.Customer!.Name, Labels.Of(device.State)));
-                }
-
-                Ledger.EnsureBookable(device, customer);
-                Ledger.AddDeviceMovement(db, device, MovementType.GoodsReceipt, device.State, input.State, time, null, reference, note);
-            }
-            else
-            {
-                device = Ledger.AddNewDevice(
-                    db, article, customer, serialNumber, input.State, MovementType.GoodsReceipt, time, null, reference, note).Device!;
-            }
-
-            devices.Add(device);
-        }
+        var movements = await Ledger.ReceiveSerialNumbersAsync(db, article, customer, serialNumbers, input.State, time, reference, note, ct);
 
         await db.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
-        return [.. devices.Select(d => d.Id)];
+        return [.. movements.Select(m => m.Device!.Id)];
     }
 
     /// <summary>Entnahme / Verbrauch of a quantity-tracked article; the stock must not become negative.</summary>

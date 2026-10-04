@@ -159,7 +159,8 @@ public sealed class ArticleService(IAppDbContextFactory dbFactory)
     {
         await using var db = dbFactory.CreateDbContext();
         var article = await db.Articles.FirstOrDefaultAsync(a => a.Id == id, ct) ?? throw new EntityNotFoundException();
-        if (await db.Movements.AnyAsync(m => m.ArticleId == id, ct) || await db.Devices.AnyAsync(d => d.ArticleId == id, ct))
+        if (await db.Movements.AnyAsync(m => m.ArticleId == id, ct) || await db.Devices.AnyAsync(d => d.ArticleId == id, ct)
+            || await db.OrderLines.AnyAsync(l => l.ArticleId == id, ct))
         {
             throw new BusinessRuleException(Messages.ArticleHasHistory);
         }
